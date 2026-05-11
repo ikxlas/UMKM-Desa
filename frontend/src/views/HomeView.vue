@@ -117,12 +117,12 @@ const features = [
     <!-- Categories Section -->
     <div class="px-6 md:px-12 mt-12">
       <div class="flex items-center justify-start gap-8 md:gap-16 overflow-x-auto pb-4 hide-scrollbar">
-        <div v-for="(cat, index) in categories" :key="index" class="flex flex-col items-center gap-3 cursor-pointer group min-w-[80px]">
+        <RouterLink to="/category" v-for="(cat, index) in categories" :key="index" class="flex flex-col items-center gap-3 cursor-pointer group min-w-[80px]">
           <div class="w-16 h-16 rounded-full bg-white border border-gray-100 shadow-sm flex items-center justify-center text-emerald-600 group-hover:bg-emerald-50 group-hover:border-emerald-200 transition-colors">
             <component :is="cat.icon" class="w-7 h-7" />
           </div>
           <span class="text-xs font-semibold text-gray-700 group-hover:text-emerald-700 transition-colors">{{ cat.name }}</span>
-        </div>
+        </RouterLink>
       </div>
     </div>
 
@@ -133,12 +133,12 @@ const features = [
           <h2 class="text-2xl font-bold text-gray-900 mb-1">Produk Terlaris</h2>
           <p class="text-gray-500 text-sm">Koleksi favorit pelanggan minggu ini</p>
         </div>
-        <a href="#" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</a>
+        <RouterLink to="/category" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
       </div>
 
       <!-- Products Grid -->
       <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-        <div v-for="(product, idx) in products" :key="idx" class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
+        <RouterLink to="/product" v-for="(product, idx) in products" :key="idx" class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
           <div class="relative h-48 overflow-hidden bg-gray-100">
             <img :src="product.image" :alt="product.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
             <div v-if="product.readyStock" class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-1 rounded">
@@ -162,7 +162,7 @@ const features = [
               <span class="text-xs text-gray-500">Terjual {{ product.sold }}</span>
             </div>
           </div>
-        </div>
+        </RouterLink>
       </div>
     </div>
 
