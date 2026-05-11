@@ -25,27 +25,27 @@ import { Leaf, Share2, Globe } from 'lucide-vue-next'
       <div>
         <h4 class="font-bold text-gray-900 mb-6 text-sm uppercase tracking-wider">Layanan</h4>
         <ul class="space-y-4">
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Cara Belanja</a></li>
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Pembayaran</a></li>
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Pengiriman</a></li>
+          <li><RouterLink to="/help" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Cara Belanja</RouterLink></li>
+          <li><RouterLink to="/help" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Pembayaran</RouterLink></li>
+          <li><RouterLink to="/help" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Pengiriman</RouterLink></li>
         </ul>
       </div>
 
       <div>
         <h4 class="font-bold text-gray-900 mb-6 text-sm uppercase tracking-wider">Tentang Kami</h4>
         <ul class="space-y-4">
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Profil Desa</a></li>
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Program UMKM</a></li>
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Kontak Kami</a></li>
+          <li><RouterLink to="/about" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Profil Desa</RouterLink></li>
+          <li><RouterLink to="/about" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Program UMKM</RouterLink></li>
+          <li><RouterLink to="/about" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Kontak Kami</RouterLink></li>
         </ul>
       </div>
 
       <div>
         <h4 class="font-bold text-gray-900 mb-6 text-sm uppercase tracking-wider">Bantuan</h4>
         <ul class="space-y-4">
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Pusat Bantuan</a></li>
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Syarat & Ketentuan</a></li>
-          <li><a href="#" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Kebijakan Privasi</a></li>
+          <li><RouterLink to="/help" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Pusat Bantuan</RouterLink></li>
+          <li><RouterLink to="/help" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Syarat & Ketentuan</RouterLink></li>
+          <li><RouterLink to="/help" class="text-gray-500 hover:text-emerald-600 text-sm transition-colors">Kebijakan Privasi</RouterLink></li>
         </ul>
       </div>
     </div>

@@ -6,15 +6,15 @@ import { Search, ShoppingCart, Bell, User } from 'lucide-vue-next'
   <nav class="bg-white border-b border-gray-100 py-4 px-6 md:px-12 flex items-center justify-between sticky top-0 z-50">
     <!-- Logo -->
     <div class="flex items-center gap-8">
-      <a href="/" class="text-emerald-700 font-bold text-xl tracking-tight">
+      <RouterLink to="/" class="text-emerald-700 font-bold text-xl tracking-tight">
         UMKM Desa Purwoasri
-      </a>
+      </RouterLink>
       
       <!-- Nav Links (Desktop) -->
       <div class="hidden md:flex items-center gap-6 text-sm text-gray-600 font-medium">
-        <a href="#" class="hover:text-emerald-600 transition-colors">Kategori</a>
-        <a href="#" class="hover:text-emerald-600 transition-colors">Tentang Kami</a>
-        <a href="#" class="hover:text-emerald-600 transition-colors">Bantuan</a>
+        <RouterLink to="/category" class="hover:text-emerald-600 transition-colors">Kategori</RouterLink>
+        <RouterLink to="/about" class="hover:text-emerald-600 transition-colors">Tentang Kami</RouterLink>
+        <RouterLink to="/help" class="hover:text-emerald-600 transition-colors">Bantuan</RouterLink>
       </div>
     </div>
 
