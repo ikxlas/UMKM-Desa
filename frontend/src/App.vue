@@ -6,9 +6,9 @@ import Footer from './components/Footer.vue'
 
 <template>
   <div class="min-h-screen bg-white font-sans text-gray-900">
-    <Navbar />
+    <Navbar v-if="!$route.path.startsWith('/admin')" />
     <RouterView />
-    <Footer />
+    <Footer v-if="!$route.path.startsWith('/admin')" />
   </div>
 </template>
 
