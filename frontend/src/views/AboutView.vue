@@ -79,8 +79,8 @@ import { ChevronRight, MapPin, Mail, Phone, Clock, Target, Heart, Award } from '
 
       <!-- Kontak Kami -->
       <div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Hubungi Kami</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Lokasi & Kontak Kami</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-10">
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
             <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 shrink-0">
               <MapPin class="w-6 h-6" />
@@ -108,6 +108,19 @@ import { ChevronRight, MapPin, Mail, Phone, Clock, Target, Heart, Award } from '
               <p class="text-sm text-gray-600">+62 812 3456 7890</p>
             </div>
           </div>
+        </div>
+
+        <!-- Google Maps Embed -->
+        <div class="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-sm border border-gray-100 bg-white p-2">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31612.981881512413!2d112.08183185368945!3d-7.723145618428546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e785d9b6b7a9efb%3A0x4027a76e352eba0!2sPurwoasri%2C%20Kec.%20Purwoasri%2C%20Kabupaten%20Kediri%2C%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1715500000000!5m2!1sid!2sid" 
+            width="100%" 
+            height="400" 
+            style="border:0; border-radius: 1.25rem;" 
+            allowfullscreen="false" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
         </div>
       </div>
 
