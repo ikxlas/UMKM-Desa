@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import ProductView from '../views/ProductView.vue'
-import CategoryView from '../views/CategoryView.vue'
-import AboutView from '../views/AboutView.vue'
-import HelpView from '../views/HelpView.vue'
+import HomeView from '../views/public/HomeView.vue'
+import ProductView from '../views/public/ProductView.vue'
+import CategoryView from '../views/public/CategoryView.vue'
+import AboutView from '../views/public/AboutView.vue'
+import HelpView from '../views/public/HelpView.vue'
 
 // Admin Views
 import AdminLayout from '../views/admin/AdminLayout.vue'
