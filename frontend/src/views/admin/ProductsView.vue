@@ -11,45 +11,125 @@ import {
   X
 } from 'lucide-vue-next'
 
-// State untuk mengontrol mode tampilan (List atau Form)
+import { onMounted } from 'vue'
+
+// State untuk mengontrol mode tampilan
 const isFormMode = ref(false)
 const editingProductId = ref<number | null>(null)
+const isLoading = ref(false)
 
-// Mock Data Produk
-const products = ref([
-  {
-    id: 1,
-    name: 'Kripik Tempe Renyah',
-    category: 'Makanan',
-    price: 15000,
-    merchant: 'Pak Budi Snack',
-    stockStatus: 'Tersedia',
-    image: '/images/kripik_main.png'
-  },
-  {
-    id: 2,
-    name: 'Anyaman Bambu Premium',
-    category: 'Kerajinan',
-    price: 75000,
-    merchant: 'Bengkel Kayu Jati',
-    stockStatus: 'Habis',
-    image: '/images/prod_1.png'
+// Data API
+const products = ref<any[]>([])
+const merchants = ref<any[]>([])
+const categories = ref<any[]>([])
+
+// State Form
+const formData = ref({
+  name: '',
+  category_id: '',
+  merchant_id: '',
+  price: 0,
+  description: '',
+  stock: 0,
+  unit: 'pcs',
+  image: '/images/kripik_main.png',
+  is_active: true,
+  is_featured: false
+})
+
+const fetchData = async () => {
+  isLoading.value = true
+  try {
+    const [prodRes, merchRes, catRes] = await Promise.all([
+      fetch('http://127.0.0.1:8000/api/products'),
+      fetch('http://127.0.0.1:8000/api/merchants'),
+      fetch('http://127.0.0.1:8000/api/categories')
+    ])
+    
+    products.value = await prodRes.json()
+    merchants.value = await merchRes.json()
+    categories.value = await catRes.json()
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  } finally {
+    isLoading.value = false
   }
-])
+}
+
+onMounted(() => {
+  fetchData()
+})
 
 const openAddForm = () => {
   editingProductId.value = null
+  formData.value = {
+    name: '', category_id: '', merchant_id: '', price: 0,
+    description: '', stock: 0, unit: 'pcs', image: '/images/kripik_main.png',
+    is_active: true, is_featured: false
+  }
   isFormMode.value = true
 }
 
-const openEditForm = (id: number) => {
-  editingProductId.value = id
+const openEditForm = (product: any) => {
+  editingProductId.value = product.id
+  formData.value = {
+    name: product.name,
+    category_id: product.category_id,
+    merchant_id: product.merchant_id,
+    price: product.price,
+    description: product.description || '',
+    stock: product.stock,
+    unit: product.unit || 'pcs',
+    image: product.image || '/images/kripik_main.png',
+    is_active: product.is_active,
+    is_featured: product.is_featured
+  }
   isFormMode.value = true
 }
 
 const closeForm = () => {
   isFormMode.value = false
   editingProductId.value = null
+}
+
+const saveProduct = async () => {
+  if (!formData.value.name || !formData.value.category_id || !formData.value.merchant_id || formData.value.price <= 0) {
+    alert('Nama, Kategori, Merchant, dan Harga yang valid wajib diisi!')
+    return
+  }
+
+  try {
+    if (editingProductId.value) {
+      await fetch(`http://127.0.0.1:8000/api/products/${editingProductId.value}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(formData.value)
+      })
+    } else {
+      await fetch('http://127.0.0.1:8000/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(formData.value)
+      })
+    }
+    await fetchData()
+    closeForm()
+  } catch (error) {
+    console.error('Error saving product:', error)
+  }
+}
+
+const deleteProduct = async (id: number) => {
+  if (!confirm('Yakin ingin menghapus produk ini?')) return
+  try {
+    await fetch(`http://127.0.0.1:8000/api/products/${id}`, {
+      method: 'DELETE',
+      headers: { 'Accept': 'application/json' }
+    })
+    await fetchData()
+  } catch (error) {
+    console.error('Error deleting product:', error)
+  }
 }
 
 const formatRupiah = (number: number) => {
@@ -106,28 +186,36 @@ const formatRupiah = (number: number) => {
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-              <tr v-for="prod in products" :key="prod.id" class="hover:bg-gray-50/50 transition-colors">
+              <tr v-if="isLoading">
+                <td colspan="6" class="text-center py-8">
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600 mx-auto"></div>
+                </td>
+              </tr>
+              <tr v-else-if="products.length === 0">
+                <td colspan="6" class="text-center py-8 text-gray-500">Belum ada produk.</td>
+              </tr>
+              <tr v-else v-for="prod in products" :key="prod.id" class="hover:bg-gray-50/50 transition-colors">
                 <td class="py-4 px-6 flex items-center gap-4">
-                  <img :src="prod.image" alt="Produk" class="w-12 h-12 rounded-lg object-cover border border-gray-100" />
+                  <img :src="prod.image || '/images/kripik_main.png'" alt="Produk" class="w-12 h-12 rounded-lg object-cover border border-gray-100" />
                   <span class="font-medium text-gray-900">{{ prod.name }}</span>
                 </td>
-                <td class="py-4 px-6">{{ prod.category }}</td>
+                <td class="py-4 px-6">{{ prod.category?.name || '-' }}</td>
                 <td class="py-4 px-6 font-medium">{{ formatRupiah(prod.price) }}</td>
-                <td class="py-4 px-6">{{ prod.merchant }}</td>
+                <td class="py-4 px-6">{{ prod.merchant?.name || '-' }}</td>
                 <td class="py-4 px-6">
                   <span 
                     class="px-2.5 py-1 rounded-full text-xs font-medium"
-                    :class="prod.stockStatus === 'Tersedia' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'"
+                    :class="prod.stock > 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'"
                   >
-                    {{ prod.stockStatus }}
+                    {{ prod.stock > 0 ? 'Tersedia' : 'Habis' }}
                   </span>
                 </td>
                 <td class="py-4 px-6 text-right">
                   <div class="flex items-center justify-end gap-2">
-                    <button @click="openEditForm(prod.id)" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                    <button @click="openEditForm(prod)" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                       <Edit class="w-4 h-4" />
                     </button>
-                    <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
+                    <button @click="deleteProduct(prod.id)" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
                       <Trash2 class="w-4 h-4" />
                     </button>
                   </div>
@@ -156,7 +244,7 @@ const formatRupiah = (number: number) => {
           <button @click="closeForm" class="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
             Batal
           </button>
-          <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 flex items-center gap-2 transition-colors">
+          <button @click="saveProduct" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 flex items-center gap-2 transition-colors">
             <Save class="w-4 h-4" /> Simpan Produk
           </button>
         </div>
@@ -172,40 +260,39 @@ const formatRupiah = (number: number) => {
             
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-gray-700">Nama Produk <span class="text-red-500">*</span></label>
-              <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Contoh: Kripik Tempe Renyah" />
+              <input v-model="formData.name" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Contoh: Kripik Tempe Renyah" />
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-gray-700">Harga (Rp) <span class="text-red-500">*</span></label>
-                <input type="number" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="15000" />
+                <input v-model="formData.price" type="number" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="15000" />
               </div>
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-gray-700">Kategori <span class="text-red-500">*</span></label>
-                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white">
+                <select v-model="formData.category_id" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white">
                   <option value="">Pilih Kategori</option>
-                  <option value="makanan">Makanan</option>
-                  <option value="kerajinan">Kerajinan</option>
-                  <option value="pertanian">Pertanian</option>
-                  <option value="fashion">Fashion</option>
-                  <option value="furnitur">Furnitur</option>
+                  <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
                 </select>
               </div>
             </div>
 
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-gray-700">Deskripsi Lengkap</label>
-              <textarea rows="4" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Tuliskan deskripsi produk yang menarik..."></textarea>
+              <textarea v-model="formData.description" rows="4" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Tuliskan deskripsi produk yang menarik..."></textarea>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="space-y-1.5">
-                <label class="text-sm font-medium text-gray-700">Nama UMKM <span class="text-red-500">*</span></label>
-                <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Contoh: Pak Budi Snack" />
+                <label class="text-sm font-medium text-gray-700">Merchant UMKM <span class="text-red-500">*</span></label>
+                <select v-model="formData.merchant_id" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white">
+                  <option value="">Pilih Merchant</option>
+                  <option v-for="merch in merchants" :key="merch.id" :value="merch.id">{{ merch.name }}</option>
+                </select>
               </div>
               <div class="space-y-1.5">
-                <label class="text-sm font-medium text-gray-700">Lokasi UMKM</label>
-                <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Contoh: Dusun Krajan, Purwoasri" />
+                <label class="text-sm font-medium text-gray-700">Stok (Jumlah)</label>
+                <input v-model="formData.stock" type="number" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Contoh: 100" />
               </div>
             </div>
           </div>

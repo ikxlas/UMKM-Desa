@@ -14,41 +14,133 @@ import {
   Facebook
 } from 'lucide-vue-next'
 
+import { onMounted } from 'vue'
+
 // State untuk mengontrol mode tampilan (List atau Form)
 const isFormMode = ref(false)
 const editingMerchantId = ref<number | null>(null)
+const isLoading = ref(false)
 
-// Mock Data Merchant
-const merchants = ref([
-  {
-    id: 1,
-    name: 'Bengkel Kayu Jati Purwoasri',
-    contact: '+62 812-3456-7890',
-    address: 'Dusun Krajan RT 01/RW 02',
-    logo: '/images/merchant.png'
-  },
-  {
-    id: 2,
-    name: 'Pak Budi Snack & Kripik',
-    contact: '+62 857-1122-3344',
-    address: 'Dusun Sumberjo RT 03/RW 01',
-    logo: '/images/kripik_main.png'
+// Data Merchant dari API
+const merchants = ref<any[]>([])
+
+// State Form
+const formData = ref({
+  name: '',
+  owner_name: '',
+  description: '',
+  address: '',
+  phone: '',
+  instagram: '',
+  facebook: '',
+  logo: '/images/merchant.png'
+})
+
+const fetchMerchants = async () => {
+  isLoading.value = true
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/merchants')
+    const data = await response.json()
+    merchants.value = data
+  } catch (error) {
+    console.error('Error fetching merchants:', error)
+  } finally {
+    isLoading.value = false
   }
-])
+}
+
+onMounted(() => {
+  fetchMerchants()
+})
 
 const openAddForm = () => {
   editingMerchantId.value = null
+  formData.value = {
+    name: '', owner_name: '', description: '', address: '',
+    phone: '', instagram: '', facebook: '', logo: '/images/merchant.png'
+  }
   isFormMode.value = true
 }
 
-const openEditForm = (id: number) => {
-  editingMerchantId.value = id
+const openEditForm = (merchant: any) => {
+  editingMerchantId.value = merchant.id
+  
+  let social = { instagram: '', facebook: '' }
+  if (merchant.social_media) {
+    try { social = JSON.parse(merchant.social_media) } catch(e) {}
+  }
+
+  formData.value = {
+    name: merchant.name || '',
+    owner_name: merchant.owner_name || '',
+    description: merchant.description || '',
+    address: merchant.address || '',
+    phone: merchant.phone || '',
+    instagram: social.instagram || '',
+    facebook: social.facebook || '',
+    logo: merchant.logo || '/images/merchant.png'
+  }
   isFormMode.value = true
 }
 
 const closeForm = () => {
   isFormMode.value = false
   editingMerchantId.value = null
+}
+
+const saveMerchant = async () => {
+  if (!formData.value.name || !formData.value.owner_name) {
+    alert('Nama Usaha dan Nama Pemilik harus diisi!');
+    return;
+  }
+
+  const payload = {
+    name: formData.value.name,
+    owner_name: formData.value.owner_name,
+    description: formData.value.description,
+    address: formData.value.address,
+    phone: formData.value.phone,
+    logo: formData.value.logo,
+    social_media: JSON.stringify({
+      instagram: formData.value.instagram,
+      facebook: formData.value.facebook
+    })
+  }
+
+  try {
+    if (editingMerchantId.value) {
+      // UPDATE
+      await fetch(`http://127.0.0.1:8000/api/merchants/${editingMerchantId.value}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+    } else {
+      // CREATE
+      await fetch('http://127.0.0.1:8000/api/merchants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+    }
+    await fetchMerchants()
+    closeForm()
+  } catch (error) {
+    console.error('Error saving merchant:', error)
+  }
+}
+
+const deleteMerchant = async (id: number) => {
+  if (!confirm('Yakin ingin menghapus merchant ini?')) return;
+  try {
+    await fetch(`http://127.0.0.1:8000/api/merchants/${id}`, {
+      method: 'DELETE',
+      headers: { 'Accept': 'application/json' }
+    })
+    await fetchMerchants()
+  } catch (error) {
+    console.error('Error deleting merchant:', error)
+  }
 }
 </script>
 
@@ -92,19 +184,27 @@ const closeForm = () => {
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-              <tr v-for="merchant in merchants" :key="merchant.id" class="hover:bg-gray-50/50 transition-colors">
+              <tr v-if="isLoading">
+                <td colspan="4" class="text-center py-8">
+                  <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600 mx-auto"></div>
+                </td>
+              </tr>
+              <tr v-else-if="merchants.length === 0">
+                <td colspan="4" class="text-center py-8 text-gray-500">Belum ada merchant terdaftar.</td>
+              </tr>
+              <tr v-else v-for="merchant in merchants" :key="merchant.id" class="hover:bg-gray-50/50 transition-colors">
                 <td class="py-4 px-6 flex items-center gap-4">
-                  <img :src="merchant.logo" alt="Logo" class="w-10 h-10 rounded-full object-cover border border-gray-200" />
+                  <img :src="merchant.logo || '/images/merchant.png'" alt="Logo" class="w-10 h-10 rounded-full object-cover border border-gray-200" />
                   <span class="font-bold text-gray-900">{{ merchant.name }}</span>
                 </td>
-                <td class="py-4 px-6 font-medium text-gray-600">{{ merchant.contact }}</td>
-                <td class="py-4 px-6 text-gray-500 truncate max-w-xs">{{ merchant.address }}</td>
+                <td class="py-4 px-6 font-medium text-gray-600">{{ merchant.phone || '-' }}</td>
+                <td class="py-4 px-6 text-gray-500 truncate max-w-xs">{{ merchant.address || '-' }}</td>
                 <td class="py-4 px-6 text-right">
                   <div class="flex items-center justify-end gap-2">
-                    <button @click="openEditForm(merchant.id)" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                    <button @click="openEditForm(merchant)" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                       <Edit class="w-4 h-4" />
                     </button>
-                    <button class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
+                    <button @click="deleteMerchant(merchant.id)" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Hapus">
                       <Trash2 class="w-4 h-4" />
                     </button>
                   </div>
@@ -133,7 +233,7 @@ const closeForm = () => {
           <button @click="closeForm" class="px-4 py-2 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
             Batal
           </button>
-          <button class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 flex items-center gap-2 transition-colors">
+          <button @click="saveMerchant" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 flex items-center gap-2 transition-colors">
             <Save class="w-4 h-4" /> Simpan Merchant
           </button>
         </div>
@@ -149,12 +249,17 @@ const closeForm = () => {
             
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-gray-700">Nama Usaha UMKM <span class="text-red-500">*</span></label>
-              <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Contoh: Bengkel Kayu Jati Purwoasri" />
+              <input v-model="formData.name" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Contoh: Bengkel Kayu Jati Purwoasri" />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-gray-700">Nama Pemilik <span class="text-red-500">*</span></label>
+              <input v-model="formData.owner_name" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Contoh: Bapak Budi Santoso" />
             </div>
 
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-gray-700">Deskripsi Usaha</label>
-              <textarea rows="5" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Ceritakan sejarah, keunggulan, atau jenis produk yang dijual oleh UMKM ini..."></textarea>
+              <textarea v-model="formData.description" rows="5" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all" placeholder="Ceritakan sejarah, keunggulan, atau jenis produk yang dijual oleh UMKM ini..."></textarea>
             </div>
           </div>
 
@@ -166,7 +271,7 @@ const closeForm = () => {
               <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <MapPin class="w-4 h-4 text-gray-500" /> Alamat Lengkap <span class="text-red-500">*</span>
               </label>
-              <textarea rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Contoh: Jl. Diponegoro RT 02 / RW 04, Desa Purwoasri..."></textarea>
+              <textarea v-model="formData.address" rows="2" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Contoh: Jl. Diponegoro RT 02 / RW 04, Desa Purwoasri..."></textarea>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
@@ -174,7 +279,7 @@ const closeForm = () => {
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <Phone class="w-4 h-4 text-emerald-600" /> Nomor WhatsApp
                 </label>
-                <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="0812-3456-7890" />
+                <input v-model="formData.phone" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="0812-3456-7890" />
               </div>
             </div>
 
@@ -183,13 +288,13 @@ const closeForm = () => {
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <Instagram class="w-4 h-4 text-pink-600" /> Link Instagram
                 </label>
-                <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://instagram.com/..." />
+                <input v-model="formData.instagram" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://instagram.com/..." />
               </div>
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <Facebook class="w-4 h-4 text-blue-600" /> Link Facebook
                 </label>
-                <input type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://facebook.com/..." />
+                <input v-model="formData.facebook" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://facebook.com/..." />
               </div>
             </div>
           </div>
@@ -227,7 +332,7 @@ const closeForm = () => {
         <button @click="closeForm" class="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors">
           Batal
         </button>
-        <button class="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 flex items-center justify-center gap-2 transition-colors">
+        <button @click="saveMerchant" class="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 flex items-center justify-center gap-2 transition-colors">
           <Save class="w-4 h-4" /> Simpan
         </button>
       </div>

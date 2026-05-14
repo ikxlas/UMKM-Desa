@@ -46,15 +46,11 @@ const formName = ref('')
 const formIconName = ref('')
 const formIconType = ref<'preset' | 'upload'>('preset')
 
-// Mock Data Kategori
-const categories = ref([
-  { id: 1, name: 'Kerajinan', isCustom: false, icon: Leaf, iconName: 'Leaf', customIconUrl: '', productCount: 45 },
-  { id: 2, name: 'Makanan', isCustom: false, icon: Croissant, iconName: 'Croissant', customIconUrl: '', productCount: 120 },
-  { id: 3, name: 'Pakaian', isCustom: false, icon: Shirt, iconName: 'Shirt', customIconUrl: '', productCount: 32 },
-  { id: 4, name: 'Pertanian', isCustom: false, icon: Tractor, iconName: 'Tractor', customIconUrl: '', productCount: 18 },
-  { id: 5, name: 'Furnitur', isCustom: false, icon: Sofa, iconName: 'Sofa', customIconUrl: '', productCount: 12 },
-  { id: 6, name: 'Lainnya', isCustom: false, icon: LayoutGrid, iconName: 'LayoutGrid', customIconUrl: '', productCount: 8 },
-])
+import { onMounted } from 'vue'
+
+// State Kategori
+const categories = ref<any[]>([])
+const isLoading = ref(false)
 
 // Pilihan Ikon untuk Form
 const availableIcons = [
@@ -88,6 +84,39 @@ const availableIcons = [
   { name: 'LayoutGrid', component: LayoutGrid },
 ]
 
+// Fetch Data Kategori dari Laravel API
+const fetchCategories = async () => {
+  isLoading.value = true
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/categories')
+    const data = await response.json()
+    
+    // Map response API agar cocok dengan format frontend
+    categories.value = data.map((item: any) => {
+      const isCustom = item.icon_type === 'custom'
+      const presetIcon = availableIcons.find(i => i.name === item.icon_value)
+      
+      return {
+        id: item.id,
+        name: item.name,
+        isCustom: isCustom,
+        icon: !isCustom && presetIcon ? presetIcon.component : Package,
+        iconName: item.icon_value,
+        customIconUrl: isCustom ? item.icon_value : '',
+        productCount: 0 // Mock, backend belum mengirim relasi produk (count)
+      }
+    })
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchCategories()
+})
+
 const openAddModal = () => {
   editingCategoryId.value = null
   formName.value = ''
@@ -100,7 +129,11 @@ const openEditModal = (cat: any) => {
   editingCategoryId.value = cat.id
   formName.value = cat.name
   formIconType.value = cat.isCustom ? 'upload' : 'preset'
-  formIconName.value = cat.iconName
+  formIconName.value = cat.isCustom ? '' : cat.iconName
+  // Jika custom, kita asumsikan iconName nyimpen URL nya (icon_value)
+  if(cat.isCustom) {
+     // untuk simplifikasi form, kita kosongkan input custom icon agar tidak rumit saat edit
+  }
   isModalOpen.value = true
 }
 
@@ -108,9 +141,51 @@ const closeModal = () => {
   isModalOpen.value = false
 }
 
-const saveCategory = () => {
-  // Logika simpan data akan di sini
-  closeModal()
+const saveCategory = async () => {
+  if (!formName.value) return
+
+  const payload = {
+    name: formName.value,
+    icon_type: formIconType.value,
+    icon_value: formIconType.value === 'preset' ? formIconName.value : '/images/default_icon.png', // Fallback upload
+    is_active: true
+  }
+
+  try {
+    if (editingCategoryId.value) {
+      // UPDATE (PUT)
+      await fetch(`http://127.0.0.1:8000/api/categories/${editingCategoryId.value}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+    } else {
+      // CREATE (POST)
+      await fetch('http://127.0.0.1:8000/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+    }
+    await fetchCategories()
+    closeModal()
+  } catch (error) {
+    console.error('Error saving category:', error)
+  }
+}
+
+const deleteCategory = async (id: number) => {
+  if(!confirm('Yakin ingin menghapus kategori ini?')) return;
+  
+  try {
+    await fetch(`http://127.0.0.1:8000/api/categories/${id}`, {
+      method: 'DELETE',
+      headers: { 'Accept': 'application/json' }
+    })
+    await fetchCategories()
+  } catch (error) {
+    console.error('Error deleting category:', error)
+  }
 }
 </script>
 
@@ -141,7 +216,15 @@ const saveCategory = () => {
     </div>
 
     <!-- GRID VIEW UNTUK KATEGORI (Daripada tabel, grid lebih cantik untuk kategori) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div v-if="isLoading" class="flex justify-center py-12">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+    </div>
+    
+    <div v-else-if="categories.length === 0" class="text-center py-12 bg-white rounded-2xl border border-gray-100">
+      <p class="text-gray-500">Belum ada kategori. Silakan tambah kategori baru.</p>
+    </div>
+
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div v-for="cat in categories" :key="cat.id" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex items-start justify-between">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors overflow-hidden shrink-0">
@@ -157,7 +240,7 @@ const saveCategory = () => {
           <button @click="openEditModal(cat)" class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
             <Edit class="w-4 h-4" />
           </button>
-          <button class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+          <button @click="deleteCategory(cat.id)" class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
             <Trash2 class="w-4 h-4" />
           </button>
         </div>
