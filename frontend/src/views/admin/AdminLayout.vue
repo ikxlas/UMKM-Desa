@@ -21,6 +21,31 @@ import {
 
 const route = useRoute()
 const isSidebarOpen = ref(true)
+const backendStatus = ref('Menghubungkan...')
+const isConnected = ref(false)
+
+import { onMounted } from 'vue'
+
+onMounted(async () => {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/ping', {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      backendStatus.value = 'Backend Terhubung';
+      isConnected.value = true;
+      console.log(data.message);
+    } else {
+      backendStatus.value = 'Backend Error';
+    }
+  } catch (error) {
+    backendStatus.value = 'Backend Offline';
+    console.error('Gagal terhubung ke backend Laravel:', error);
+  }
+})
 
 const adminMenus = [
   { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
@@ -101,6 +126,13 @@ const adminMenus = [
         </div>
 
         <div class="flex items-center gap-5">
+          <!-- Indikator Koneksi Backend -->
+          <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium" 
+               :class="isConnected ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'">
+            <div class="w-2 h-2 rounded-full animate-pulse" :class="isConnected ? 'bg-emerald-500' : 'bg-red-500'"></div>
+            {{ backendStatus }}
+          </div>
+
           <button class="text-gray-500 hover:text-emerald-600 relative">
             <Bell class="w-5 h-5" />
             <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
