@@ -45,6 +45,8 @@ const editingCategoryId = ref<number | null>(null)
 const formName = ref('')
 const formIconName = ref('')
 const formIconType = ref<'preset' | 'upload'>('preset')
+const formIconFile = ref<File | null>(null)
+const iconPreviewUrl = ref('')
 
 import { onMounted } from 'vue'
 
@@ -139,32 +141,43 @@ const openEditModal = (cat: any) => {
 
 const closeModal = () => {
   isModalOpen.value = false
+  formIconFile.value = null
+  iconPreviewUrl.value = ''
+}
+
+const handleIconUpload = (e: any) => {
+  const file = e.target.files[0]
+  if (file) {
+    formIconFile.value = file
+    iconPreviewUrl.value = URL.createObjectURL(file)
+  }
 }
 
 const saveCategory = async () => {
   if (!formName.value) return
 
-  const payload = {
-    name: formName.value,
-    icon_type: formIconType.value,
-    icon_value: formIconType.value === 'preset' ? formIconName.value : '/images/default_icon.png', // Fallback upload
-    is_active: true
+  const formData = new FormData()
+  formData.append('name', formName.value)
+  formData.append('icon_type', formIconType.value)
+  formData.append('is_active', '1')
+
+  if (formIconType.value === 'preset') {
+    formData.append('icon_value', formIconName.value)
+  } else if (formIconFile.value) {
+    formData.append('icon_file', formIconFile.value)
   }
 
   try {
     if (editingCategoryId.value) {
-      // UPDATE (PUT)
+      formData.append('_method', 'PUT')
       await fetch(`http://127.0.0.1:8000/api/categories/${editingCategoryId.value}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
+        method: 'POST', // Use POST with _method=PUT to handle FormData perfectly
+        body: formData
       })
     } else {
-      // CREATE (POST)
       await fetch('http://127.0.0.1:8000/api/categories', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
+        body: formData
       })
     }
     await fetchCategories()
@@ -315,11 +328,15 @@ const deleteCategory = async (id: number) => {
             <!-- Unggah Ikon (Hanya muncul jika tipe 'upload') -->
             <div v-else class="space-y-3">
               <label class="text-sm font-medium text-gray-700">Unggah Gambar Ikon</label>
-              <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer group">
-                <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-3 group-hover:text-emerald-500 transition-colors" />
-                <p class="text-sm text-emerald-600 font-medium">Klik untuk memilih gambar</p>
-                <p class="text-xs text-gray-400 mt-1">Disarankan format PNG/SVG transparan</p>
-                <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 1MB</p>
+              <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden h-[180px] flex flex-col justify-center">
+                <input type="file" accept="image/*" @change="handleIconUpload" class="absolute inset-0 opacity-0 cursor-pointer z-20" />
+                <template v-if="!iconPreviewUrl">
+                  <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-3 group-hover:text-emerald-500 transition-colors" />
+                  <p class="text-sm text-emerald-600 font-medium">Klik untuk memilih gambar</p>
+                  <p class="text-xs text-gray-400 mt-1">Disarankan format PNG/SVG transparan</p>
+                  <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 2MB</p>
+                </template>
+                <img v-else :src="iconPreviewUrl" class="absolute inset-0 w-full h-full object-contain p-2 pointer-events-none" />
               </div>
             </div>
 
