@@ -23,6 +23,11 @@ const products = ref<any[]>([])
 const merchants = ref<any[]>([])
 const categories = ref<any[]>([])
 
+const imageFile = ref<File | null>(null)
+const imagePreviewUrl = ref('')
+const galleryFiles = ref<File[]>([])
+const galleryPreviewUrls = ref<string[]>([])
+
 // State Form
 const formData = ref({
   name: '',
@@ -33,6 +38,7 @@ const formData = ref({
   stock: 0,
   unit: 'pcs',
   image: '/images/kripik_main.png',
+  gallery_images: [] as string[],
   is_active: true,
   is_featured: false
 })
@@ -63,9 +69,15 @@ onMounted(() => {
 const openAddForm = () => {
   editingProductId.value = null
   formData.value = {
-    name: '', category_id: '', merchant_id: '', price: 0,
-    description: '', stock: 0, unit: 'pcs', image: '/images/kripik_main.png',
-    is_active: true, is_featured: false
+    name: '', category_id: '', merchant_id: '',
+    description: '',
+    price: 0,
+    stock: 0,
+    unit: 'pcs',
+    image: '/images/kripik_main.png',
+    gallery_images: [],
+    is_active: true,
+    is_featured: false
   }
   isFormMode.value = true
 }
@@ -81,6 +93,7 @@ const openEditForm = (product: any) => {
     stock: product.stock,
     unit: product.unit || 'pcs',
     image: product.image || '/images/kripik_main.png',
+    gallery_images: product.gallery_images || [],
     is_active: product.is_active,
     is_featured: product.is_featured
   }
@@ -90,6 +103,39 @@ const openEditForm = (product: any) => {
 const closeForm = () => {
   isFormMode.value = false
   editingProductId.value = null
+  imageFile.value = null
+  imagePreviewUrl.value = ''
+  galleryFiles.value = []
+  galleryPreviewUrls.value = []
+}
+
+const handleImageUpload = (e: any) => {
+  const file = e.target.files[0]
+  if (file) {
+    imageFile.value = file
+    imagePreviewUrl.value = URL.createObjectURL(file)
+  }
+}
+
+const handleGalleryUpload = (e: any) => {
+  if (!e.target.files) return
+  const files = Array.from(e.target.files) as File[]
+  // limit to 4
+  const existingCount = (formData.value.gallery_images || []).length
+  const availableSlots = 4 - existingCount - galleryFiles.value.length
+  if (availableSlots <= 0) return
+
+  const newFiles = files.slice(0, availableSlots)
+  
+  newFiles.forEach(f => {
+    galleryFiles.value.push(f)
+    galleryPreviewUrls.value.push(URL.createObjectURL(f))
+  })
+}
+
+const removeGalleryPreview = (index: number) => {
+  galleryFiles.value.splice(index, 1)
+  galleryPreviewUrls.value.splice(index, 1)
 }
 
 const saveProduct = async () => {
@@ -99,17 +145,35 @@ const saveProduct = async () => {
   }
 
   try {
+    const payload = new FormData()
+    payload.append('name', formData.value.name || '')
+    payload.append('merchant_id', (formData.value.merchant_id || '').toString())
+    payload.append('category_id', (formData.value.category_id || '').toString())
+    payload.append('description', formData.value.description || '')
+    payload.append('price', (formData.value.price || 0).toString())
+    payload.append('stock', (formData.value.stock || 0).toString())
+    payload.append('unit', formData.value.unit || 'pcs')
+    payload.append('is_active', formData.value.is_active ? '1' : '0')
+    payload.append('is_featured', formData.value.is_featured ? '1' : '0')
+
+    if (imageFile.value) {
+      payload.append('image_file', imageFile.value)
+    }
+
+    galleryFiles.value.forEach((file) => {
+      payload.append('gallery_files[]', file)
+    })
+
     if (editingProductId.value) {
+      payload.append('_method', 'PUT')
       await fetch(`http://127.0.0.1:8000/api/products/${editingProductId.value}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(formData.value)
+        method: 'POST',
+        body: payload
       })
     } else {
       await fetch('http://127.0.0.1:8000/api/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(formData.value)
+        body: payload
       })
     }
     await fetchData()
@@ -341,17 +405,41 @@ const formatRupiah = (number: number) => {
             
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-gray-700">Foto Utama</label>
-              <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer group">
-                <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-2 group-hover:text-emerald-500" />
-                <p class="text-sm text-gray-600 font-medium">Klik untuk unggah foto utama</p>
-                <p class="text-xs text-gray-400 mt-1">PNG, JPG maksimal 2MB</p>
+              <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden h-[200px] flex flex-col justify-center">
+                <input type="file" accept="image/*" @change="handleImageUpload" class="absolute inset-0 opacity-0 cursor-pointer z-20" />
+                <template v-if="!imagePreviewUrl && !formData.image">
+                  <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-2 group-hover:text-emerald-500" />
+                  <p class="text-sm text-gray-600 font-medium">Klik untuk unggah foto utama</p>
+                  <p class="text-xs text-gray-400 mt-1">PNG, JPG maksimal 2MB</p>
+                </template>
+                <img v-else :src="imagePreviewUrl || formData.image" class="absolute inset-0 w-full h-full object-contain pointer-events-none p-2" />
               </div>
             </div>
 
             <div class="space-y-1.5 pt-4">
               <label class="text-sm font-medium text-gray-700">Galeri Foto Tambahan</label>
-              <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer">
-                <p class="text-sm text-emerald-600 font-medium">+ Tambah Foto (Maks 4)</p>
+              
+              <div class="grid grid-cols-4 gap-2 mb-2">
+                <!-- Tampilkan Existing URL dari Database -->
+                <div v-for="(url, idx) in (formData.gallery_images || [])" :key="'db-'+idx" class="aspect-square rounded-xl border border-gray-200 overflow-hidden relative group">
+                  <img :src="url" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                     <!-- Di aplikasi nyata kita bisa tambah tombol hapus, tapi untuk kesederhanaan, kita biarkan saja -->
+                  </div>
+                </div>
+
+                <!-- Tampilkan Previews dari file baru -->
+                <div v-for="(url, idx) in galleryPreviewUrls" :key="'new-'+idx" class="aspect-square rounded-xl border border-gray-200 overflow-hidden relative group">
+                  <img :src="url" class="w-full h-full object-cover" />
+                  <button @click="removeGalleryPreview(idx)" type="button" class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-all">
+                    <X class="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+
+              <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 transition-colors cursor-pointer relative overflow-hidden" v-if="((formData.gallery_images || []).length + galleryPreviewUrls.length) < 4">
+                <input type="file" accept="image/*" multiple @change="handleGalleryUpload" class="absolute inset-0 opacity-0 cursor-pointer z-20" />
+                <p class="text-sm text-emerald-600 font-medium">+ Tambah Foto (Sisa {{ 4 - ((formData.gallery_images || []).length + galleryPreviewUrls.length) }})</p>
               </div>
             </div>
           </div>
@@ -362,28 +450,17 @@ const formatRupiah = (number: number) => {
             
             <div class="space-y-1.5">
               <label class="text-sm font-medium text-gray-700">Status Stok</label>
-              <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white">
-                <option value="tersedia">Tersedia</option>
-                <option value="habis">Habis</option>
+              <select v-model="formData.is_active" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white">
+                <option :value="true">Tersedia (Aktif)</option>
+                <option :value="false">Habis / Tidak Aktif</option>
               </select>
             </div>
 
             <div class="pt-4 space-y-3">
               <label class="text-sm font-medium text-gray-700">Badge Produk</label>
-              
               <label class="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
-                <span class="text-sm text-gray-700">Terlaris (Best Seller)</span>
-              </label>
-              
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
-                <span class="text-sm text-gray-700">Produk Baru (New)</span>
-              </label>
-
-              <label class="flex items-center gap-3 cursor-pointer">
-                <input type="checkbox" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" checked />
-                <span class="text-sm text-gray-700">Ready Stock</span>
+                <input type="checkbox" v-model="formData.is_featured" class="w-4 h-4 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500" />
+                <span class="text-sm text-gray-700">Tandai Sebagai Produk Unggulan</span>
               </label>
             </div>
           </div>

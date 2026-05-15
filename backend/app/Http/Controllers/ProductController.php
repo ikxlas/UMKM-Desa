@@ -23,9 +23,27 @@ class ProductController extends Controller
             'stock' => 'required|integer',
             'unit' => 'required|string',
             'image' => 'nullable|string',
+            'image_file' => 'nullable|image|max:2048',
+            'gallery_files.*' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
             'is_featured' => 'boolean'
         ]);
+
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('products', 'public');
+            $validated['image'] = 'http://127.0.0.1:8000/storage/' . $path;
+        } else if (empty($validated['image'])) {
+            $validated['image'] = '/images/kripik_main.png'; // Fallback
+        }
+
+        if ($request->hasFile('gallery_files')) {
+            $galleryUrls = [];
+            foreach ($request->file('gallery_files') as $file) {
+                $path = $file->store('products/gallery', 'public');
+                $galleryUrls[] = 'http://127.0.0.1:8000/storage/' . $path;
+            }
+            $validated['gallery_images'] = $galleryUrls;
+        }
 
         $product = Product::create($validated);
         return response()->json($product->load(['category', 'merchant']), 201);
@@ -47,9 +65,25 @@ class ProductController extends Controller
             'stock' => 'sometimes|required|integer',
             'unit' => 'sometimes|required|string',
             'image' => 'nullable|string',
+            'image_file' => 'nullable|image|max:2048',
+            'gallery_files.*' => 'nullable|image|max:2048',
             'is_active' => 'boolean',
             'is_featured' => 'boolean'
         ]);
+
+        if ($request->hasFile('image_file')) {
+            $path = $request->file('image_file')->store('products', 'public');
+            $validated['image'] = 'http://127.0.0.1:8000/storage/' . $path;
+        }
+
+        if ($request->hasFile('gallery_files')) {
+            $galleryUrls = [];
+            foreach ($request->file('gallery_files') as $file) {
+                $path = $file->store('products/gallery', 'public');
+                $galleryUrls[] = 'http://127.0.0.1:8000/storage/' . $path;
+            }
+            $validated['gallery_images'] = $galleryUrls;
+        }
 
         $product->update($validated);
         return response()->json($product->load(['category', 'merchant']));
