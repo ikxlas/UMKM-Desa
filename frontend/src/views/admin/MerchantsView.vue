@@ -24,6 +24,11 @@ const isLoading = ref(false)
 // Data Merchant dari API
 const merchants = ref<any[]>([])
 
+const logoFile = ref<File | null>(null)
+const logoPreviewUrl = ref('')
+const storefrontFile = ref<File | null>(null)
+const storefrontPreviewUrl = ref('')
+
 // State Form
 const formData = ref({
   name: '',
@@ -33,7 +38,8 @@ const formData = ref({
   phone: '',
   instagram: '',
   facebook: '',
-  logo: '/images/merchant.png'
+  logo: '/images/merchant.png',
+  storefront_image: ''
 })
 
 const fetchMerchants = async () => {
@@ -57,7 +63,7 @@ const openAddForm = () => {
   editingMerchantId.value = null
   formData.value = {
     name: '', owner_name: '', description: '', address: '',
-    phone: '', instagram: '', facebook: '', logo: '/images/merchant.png'
+    phone: '', instagram: '', facebook: '', logo: '/images/merchant.png', storefront_image: ''
   }
   isFormMode.value = true
 }
@@ -78,7 +84,8 @@ const openEditForm = (merchant: any) => {
     phone: merchant.phone || '',
     instagram: social.instagram || '',
     facebook: social.facebook || '',
-    logo: merchant.logo || '/images/merchant.png'
+    logo: merchant.logo || '/images/merchant.png',
+    storefront_image: merchant.storefront_image || ''
   }
   isFormMode.value = true
 }
@@ -86,6 +93,26 @@ const openEditForm = (merchant: any) => {
 const closeForm = () => {
   isFormMode.value = false
   editingMerchantId.value = null
+  logoFile.value = null
+  logoPreviewUrl.value = ''
+  storefrontFile.value = null
+  storefrontPreviewUrl.value = ''
+}
+
+const handleLogoUpload = (e: any) => {
+  const file = e.target.files[0]
+  if (file) {
+    logoFile.value = file
+    logoPreviewUrl.value = URL.createObjectURL(file)
+  }
+}
+
+const handleStorefrontUpload = (e: any) => {
+  const file = e.target.files[0]
+  if (file) {
+    storefrontFile.value = file
+    storefrontPreviewUrl.value = URL.createObjectURL(file)
+  }
 }
 
 const saveMerchant = async () => {
@@ -94,33 +121,38 @@ const saveMerchant = async () => {
     return;
   }
 
-  const payload = {
-    name: formData.value.name,
-    owner_name: formData.value.owner_name,
-    description: formData.value.description,
-    address: formData.value.address,
-    phone: formData.value.phone,
-    logo: formData.value.logo,
-    social_media: JSON.stringify({
-      instagram: formData.value.instagram,
-      facebook: formData.value.facebook
-    })
+  const payload = new FormData()
+  payload.append('name', formData.value.name)
+  payload.append('owner_name', formData.value.owner_name)
+  payload.append('description', formData.value.description)
+  payload.append('address', formData.value.address)
+  payload.append('phone', formData.value.phone)
+  payload.append('social_media', JSON.stringify({
+    instagram: formData.value.instagram,
+    facebook: formData.value.facebook
+  }))
+
+  if (logoFile.value) {
+    payload.append('logo_file', logoFile.value)
+  }
+
+  if (storefrontFile.value) {
+    payload.append('storefront_file', storefrontFile.value)
   }
 
   try {
     if (editingMerchantId.value) {
       // UPDATE
+      payload.append('_method', 'PUT')
       await fetch(`http://127.0.0.1:8000/api/merchants/${editingMerchantId.value}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
+        method: 'POST',
+        body: payload
       })
     } else {
       // CREATE
       await fetch('http://127.0.0.1:8000/api/merchants', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify(payload)
+        body: payload
       })
     }
     await fetchMerchants()
@@ -307,9 +339,13 @@ const deleteMerchant = async (id: number) => {
           <!-- Unggah Logo -->
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
             <h3 class="font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Logo Usaha</h3>
-            <div class="border-2 border-dashed border-gray-300 rounded-full w-32 h-32 mx-auto flex flex-col items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer group">
-              <ImageIcon class="w-6 h-6 text-gray-400 mb-1 group-hover:text-emerald-500" />
-              <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Unggah</span>
+            <div class="border-2 border-dashed border-gray-300 rounded-full w-32 h-32 mx-auto flex flex-col items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden">
+              <input type="file" accept="image/*" @change="handleLogoUpload" class="absolute inset-0 opacity-0 cursor-pointer z-20" />
+              <template v-if="!logoPreviewUrl">
+                <ImageIcon class="w-6 h-6 text-gray-400 mb-1 group-hover:text-emerald-500" />
+                <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Unggah</span>
+              </template>
+              <img v-else :src="logoPreviewUrl || formData.logo" class="absolute inset-0 w-full h-full object-cover pointer-events-none" />
             </div>
             <p class="text-xs text-center text-gray-400 mt-2">Disarankan gambar berbentuk persegi (1:1)</p>
           </div>
@@ -317,10 +353,14 @@ const deleteMerchant = async (id: number) => {
           <!-- Unggah Foto Fisik Usaha -->
           <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
             <h3 class="font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Foto Tempat Usaha</h3>
-            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer group">
-              <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-2 group-hover:text-emerald-500" />
-              <p class="text-sm text-gray-600 font-medium">Unggah foto toko/bengkel</p>
-              <p class="text-xs text-gray-400 mt-1">Ini akan mempermudah pembeli menemukan lokasi.</p>
+            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden h-[180px] flex flex-col justify-center">
+              <input type="file" accept="image/*" @change="handleStorefrontUpload" class="absolute inset-0 opacity-0 cursor-pointer z-20" />
+              <template v-if="!storefrontPreviewUrl && !formData.storefront_image">
+                <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-2 group-hover:text-emerald-500" />
+                <p class="text-sm text-gray-600 font-medium">Unggah foto toko/bengkel</p>
+                <p class="text-xs text-gray-400 mt-1">Ini akan mempermudah pembeli menemukan lokasi.</p>
+              </template>
+              <img v-else :src="storefrontPreviewUrl || formData.storefront_image" class="absolute inset-0 w-full h-full object-cover pointer-events-none" />
             </div>
           </div>
 
