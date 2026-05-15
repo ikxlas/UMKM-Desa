@@ -31,7 +31,9 @@ const faqs = ref([
 ])
 
 const toggleFaq = (index: number) => {
-  faqs.value[index].isOpen = !faqs.value[index].isOpen
+  if (faqs.value[index]) {
+    faqs.value[index].isOpen = !faqs.value[index].isOpen
+  }
 }
 </script>
 
