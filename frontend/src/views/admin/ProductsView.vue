@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { 
   Plus, 
   Search, 
@@ -22,6 +22,19 @@ const isLoading = ref(false)
 const products = ref<any[]>([])
 const merchants = ref<any[]>([])
 const categories = ref<any[]>([])
+
+// Filter State
+const searchQuery = ref('')
+const selectedCategory = ref('')
+
+const filteredProducts = computed(() => {
+  return products.value.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+                        (p.merchant?.name && p.merchant.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+    const matchCat = selectedCategory.value === '' ? true : p.category_id == selectedCategory.value
+    return matchSearch && matchCat
+  })
+})
 
 const imageFile = ref<File | null>(null)
 const imagePreviewUrl = ref('')
@@ -222,15 +235,15 @@ const formatRupiah = (number: number) => {
           <Search class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input 
             type="text" 
+            v-model="searchQuery"
             placeholder="Cari nama produk atau merchant..." 
             class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
           />
         </div>
         <div class="flex gap-2 w-full md:w-auto">
-          <select class="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
+          <select v-model="selectedCategory" class="border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white">
             <option value="">Semua Kategori</option>
-            <option value="Makanan">Makanan</option>
-            <option value="Kerajinan">Kerajinan</option>
+            <option v-for="cat in categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
           </select>
         </div>
       </div>
@@ -255,10 +268,10 @@ const formatRupiah = (number: number) => {
                   <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600 mx-auto"></div>
                 </td>
               </tr>
-              <tr v-else-if="products.length === 0">
+              <tr v-else-if="filteredProducts.length === 0">
                 <td colspan="6" class="text-center py-8 text-gray-500">Belum ada produk.</td>
               </tr>
-              <tr v-else v-for="prod in products" :key="prod.id" class="hover:bg-gray-50/50 transition-colors">
+              <tr v-else v-for="prod in filteredProducts" :key="prod.id" class="hover:bg-gray-50/50 transition-colors">
                 <td class="py-4 px-6 flex items-center gap-4">
                   <img :src="prod.image || '/images/kripik_main.png'" alt="Produk" class="w-12 h-12 rounded-lg object-cover border border-gray-100" />
                   <span class="font-medium text-gray-900">{{ prod.name }}</span>
@@ -408,11 +421,14 @@ const formatRupiah = (number: number) => {
               <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden h-[200px] flex flex-col justify-center">
                 <input type="file" accept="image/*" @change="handleImageUpload" class="absolute inset-0 opacity-0 cursor-pointer z-20" />
                 <template v-if="!imagePreviewUrl && !formData.image">
-                  <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-2 group-hover:text-emerald-500" />
-                  <p class="text-sm text-gray-600 font-medium">Klik untuk unggah foto utama</p>
-                  <p class="text-xs text-gray-400 mt-1">PNG, JPG maksimal 5MB</p>
+                  <p class="text-sm text-emerald-600 font-medium">Klik untuk memilih gambar</p>
+                  <p class="text-xs text-gray-400 mt-1">Disarankan format JPG/PNG kualitas tinggi</p>
+                  <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 5MB</p>
                 </template>
-                <img v-else :src="imagePreviewUrl || formData.image" class="absolute inset-0 w-full h-full object-contain pointer-events-none p-2" />
+                <div v-else class="flex flex-col items-center justify-center pointer-events-none">
+                  <p class="text-sm text-emerald-600 font-bold">✓ 1 Gambar Terpilih</p>
+                  <p class="text-xs text-gray-500 mt-2">Klik area ini untuk mengganti gambar</p>
+                </div>
               </div>
             </div>
 

@@ -29,7 +29,8 @@ const fetchData = async () => {
       fetch('http://127.0.0.1:8000/api/products'),
       fetch('http://127.0.0.1:8000/api/settings')
     ])
-    allProducts.value = await prodRes.json()
+    const rawProducts = await prodRes.json()
+    allProducts.value = rawProducts.filter((p: any) => p.is_featured == 1 || p.is_featured === true)
     const set = await setRes.json()
     if(set.featured_trending) settings.value.featured_trending = set.featured_trending
     if(set.featured_bestseller) settings.value.featured_bestseller = set.featured_bestseller
