@@ -156,7 +156,7 @@ const savePromoBanner = async () => {
               </div>
               <img :src="heroPreviewUrl || settings.hero_image" alt="Hero Preview" class="absolute inset-0 w-full h-full object-cover" />
             </div>
-            <p class="text-xs text-gray-400 mt-1">Rekomendasi rasio 16:9, resolusi 1920x1080px (Maks 2MB).</p>
+            <p class="text-xs text-gray-400 mt-1">Rekomendasi rasio 16:9, resolusi 1920x1080px (Maks 5MB).</p>
           </div>
         </div>
 

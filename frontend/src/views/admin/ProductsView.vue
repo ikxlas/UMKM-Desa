@@ -410,7 +410,7 @@ const formatRupiah = (number: number) => {
                 <template v-if="!imagePreviewUrl && !formData.image">
                   <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-2 group-hover:text-emerald-500" />
                   <p class="text-sm text-gray-600 font-medium">Klik untuk unggah foto utama</p>
-                  <p class="text-xs text-gray-400 mt-1">PNG, JPG maksimal 2MB</p>
+                  <p class="text-xs text-gray-400 mt-1">PNG, JPG maksimal 5MB</p>
                 </template>
                 <img v-else :src="imagePreviewUrl || formData.image" class="absolute inset-0 w-full h-full object-contain pointer-events-none p-2" />
               </div>
