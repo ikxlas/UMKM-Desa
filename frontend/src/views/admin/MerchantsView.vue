@@ -357,7 +357,7 @@ const deleteMerchant = async (id: number) => {
               <input type="file" accept="image/*" @change="handleStorefrontUpload" class="absolute inset-0 opacity-0 cursor-pointer z-20" />
               <template v-if="!storefrontPreviewUrl && !formData.storefront_image">
                 <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-2 group-hover:text-emerald-500" />
-                <p class="text-sm text-gray-600 font-medium">Unggah foto toko/bengkel</p>
+                <p class="text-sm text-gray-600 font-medium">Unggah foto toko</p>
                 <p class="text-xs text-gray-400 mt-1">Ini akan mempermudah pembeli menemukan lokasi.</p>
               </template>
               <img v-else :src="storefrontPreviewUrl || formData.storefront_image" class="absolute inset-0 w-full h-full object-cover pointer-events-none" />
