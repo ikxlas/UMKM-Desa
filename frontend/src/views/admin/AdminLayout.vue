@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { RouterView, useRoute } from 'vue-router'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import { 
   LayoutDashboard, 
   Package, 
@@ -55,8 +55,23 @@ const adminMenus = [
   { name: 'Banner & Homepage', path: '/admin/banners', icon: ImageIcon },
   { name: 'Produk Unggulan', path: '/admin/featured', icon: Star },
   { name: 'Statistik Lengkap', path: '/admin/statistics', icon: TrendingUp },
-  
 ]
+
+const router = useRouter()
+
+const handleLogout = async () => {
+  try {
+    await fetch('http://127.0.0.1:8000/api/logout', {
+      method: 'POST'
+    })
+  } catch (e) {
+    console.error(e)
+  } finally {
+    localStorage.removeItem('admin_token')
+    localStorage.removeItem('admin_user')
+    router.push('/admin/login')
+  }
+}
 </script>
 
 <template>
@@ -99,10 +114,10 @@ const adminMenus = [
 
       <!-- Sidebar Footer -->
       <div class="p-4 border-t border-gray-100">
-        <a href="/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+        <button @click="handleLogout" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
           <LogOut class="w-5 h-5" />
-          Keluar ke Website
-        </a>
+          Keluar (Logout)
+        </button>
       </div>
     </aside>
 

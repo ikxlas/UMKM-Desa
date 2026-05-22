@@ -8,6 +8,7 @@ import HelpView from '../views/public/HelpView.vue'
 // Admin Views
 import AdminLayout from '../views/admin/AdminLayout.vue'
 import DashboardView from '../views/admin/DashboardView.vue'
+import LoginView from '../views/auth/LoginView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,8 +39,14 @@ const router = createRouter({
       component: HelpView,
     },
     {
+      path: '/admin/login',
+      name: 'admin-login',
+      component: LoginView,
+    },
+    {
       path: '/admin',
       component: AdminLayout,
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
@@ -79,6 +86,19 @@ const router = createRouter({
       ]
     }
   ],
+})
+
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
+  const token = localStorage.getItem('admin_token')
+
+  if (requiresAuth && !token) {
+    next({ name: 'admin-login' })
+  } else if (to.name === 'admin-login' && token) {
+    next({ name: 'admin-dashboard' })
+  } else {
+    next()
+  }
 })
 
 export default router

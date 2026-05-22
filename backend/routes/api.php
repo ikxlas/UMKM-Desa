@@ -20,10 +20,21 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\AuthController;
 
-Route::apiResource('categories', CategoryController::class);
-Route::apiResource('merchants', MerchantController::class);
-Route::apiResource('products', ProductController::class);
+Route::post('/login', [AuthController::class, 'login']);
 
+// Public GET Routes (for visitors/home page)
+Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
+Route::apiResource('merchants', MerchantController::class)->only(['index', 'show']);
+Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::get('settings', [SettingController::class, 'index']);
-Route::post('settings', [SettingController::class, 'update']);
+
+// Protected Admin Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
+    Route::apiResource('merchants', MerchantController::class)->except(['index', 'show']);
+    Route::apiResource('products', ProductController::class)->except(['index', 'show']);
+    Route::post('settings', [SettingController::class, 'update']);
+});
