@@ -44,7 +44,7 @@ const editingCategoryId = ref<number | null>(null)
 // State form
 const formName = ref('')
 const formIconName = ref('')
-const formIconType = ref<'preset' | 'upload'>('preset')
+const formIconType = ref<'preset' | 'custom'>('preset')
 const formIconFile = ref<File | null>(null)
 const iconPreviewUrl = ref('')
 
@@ -130,7 +130,7 @@ const openAddModal = () => {
 const openEditModal = (cat: any) => {
   editingCategoryId.value = cat.id
   formName.value = cat.name
-  formIconType.value = cat.isCustom ? 'upload' : 'preset'
+  formIconType.value = cat.isCustom ? 'custom' : 'preset'
   formIconName.value = cat.isCustom ? '' : cat.iconName
   // Jika custom, kita asumsikan iconName nyimpen URL nya (icon_value)
   if(cat.isCustom) {
@@ -168,18 +168,29 @@ const saveCategory = async () => {
   }
 
   try {
+    let res;
     if (editingCategoryId.value) {
       formData.append('_method', 'PUT')
-      await fetch(`http://127.0.0.1:8000/api/categories/${editingCategoryId.value}`, {
+      res = await fetch(`http://127.0.0.1:8000/api/categories/${editingCategoryId.value}`, {
         method: 'POST', // Use POST with _method=PUT to handle FormData perfectly
+        headers: { 'Accept': 'application/json' },
         body: formData
       })
     } else {
-      await fetch('http://127.0.0.1:8000/api/categories', {
+      res = await fetch('http://127.0.0.1:8000/api/categories', {
         method: 'POST',
+        headers: { 'Accept': 'application/json' },
         body: formData
       })
     }
+
+    if (!res.ok) {
+      const err = await res.json()
+      alert('Error: ' + (err.message || 'Gagal menyimpan kategori'))
+      console.error(err)
+      return
+    }
+
     await fetchCategories()
     closeModal()
   } catch (error) {
@@ -242,7 +253,7 @@ const deleteCategory = async (id: number) => {
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors overflow-hidden shrink-0">
             <component v-if="!cat.isCustom" :is="cat.icon" class="w-7 h-7" />
-            <img v-else :src="cat.customIconUrl" alt="Custom Icon" class="w-8 h-8 object-contain" />
+            <img v-else :src="cat.customIconUrl" alt="Custom Icon" class="w-full h-full object-cover" />
           </div>
           <div class="min-w-0 flex-1">
             <h3 class="font-bold text-gray-900 text-lg truncate">{{ cat.name }}</h3>
@@ -299,9 +310,9 @@ const deleteCategory = async (id: number) => {
                   <input type="radio" v-model="formIconType" value="preset" class="hidden" />
                   <span class="text-sm font-medium" :class="formIconType === 'preset' ? 'text-emerald-700' : 'text-gray-600'">Ikon Bawaan</span>
                 </label>
-                <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-md shadow-sm border border-gray-100 flex-1 justify-center transition-all hover:border-emerald-200" :class="formIconType === 'upload' ? 'ring-2 ring-emerald-500' : ''">
-                  <input type="radio" v-model="formIconType" value="upload" class="hidden" />
-                  <span class="text-sm font-medium" :class="formIconType === 'upload' ? 'text-emerald-700' : 'text-gray-600'">Unggah Sendiri</span>
+                <label class="flex items-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-md shadow-sm border border-gray-100 flex-1 justify-center transition-all hover:border-emerald-200" :class="formIconType === 'custom' ? 'ring-2 ring-emerald-500' : ''">
+                  <input type="radio" v-model="formIconType" value="custom" class="hidden" />
+                  <span class="text-sm font-medium" :class="formIconType === 'custom' ? 'text-emerald-700' : 'text-gray-600'">Unggah Sendiri</span>
                 </label>
               </div>
             </div>
@@ -334,7 +345,7 @@ const deleteCategory = async (id: number) => {
                   <ImageIcon class="w-8 h-8 text-gray-400 mx-auto mb-3 group-hover:text-emerald-500 transition-colors" />
                   <p class="text-sm text-emerald-600 font-medium">Klik untuk memilih gambar</p>
                   <p class="text-xs text-gray-400 mt-1">Disarankan format PNG/SVG transparan</p>
-                  <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 2MB</p>
+                  <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 5MB</p>
                 </template>
                 <img v-else :src="iconPreviewUrl" class="absolute inset-0 w-full h-full object-contain p-2 pointer-events-none" />
               </div>
