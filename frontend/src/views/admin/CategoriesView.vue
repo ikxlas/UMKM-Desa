@@ -34,7 +34,8 @@ import {
   Sparkles,
   Sprout,
   Truck,
-  Smartphone
+  Smartphone,
+  Image as ImageIcon
 } from 'lucide-vue-next'
 
 // State untuk mengontrol modal
@@ -97,7 +98,6 @@ const fetchCategories = async () => {
     categories.value = data.map((item: any) => {
       const isCustom = item.icon_type === 'custom'
       const presetIcon = availableIcons.find(i => i.name === item.icon_value)
-      
       return {
         id: item.id,
         name: item.name,
@@ -105,7 +105,7 @@ const fetchCategories = async () => {
         icon: !isCustom && presetIcon ? presetIcon.component : Package,
         iconName: item.icon_value,
         customIconUrl: isCustom ? item.icon_value : '',
-        productCount: 0 // Mock, backend belum mengirim relasi produk (count)
+        productCount: item.products_count || 0 // Fetch actual relational count
       }
     })
   } catch (error) {

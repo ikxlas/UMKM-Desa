@@ -52,9 +52,9 @@ const adminMenus = [
   { name: 'Manajemen Produk', path: '/admin/products', icon: Package },
   { name: 'Manajemen Merchant', path: '/admin/merchants', icon: Store },
   { name: 'Kategori Produk', path: '/admin/categories', icon: Tags },
-  { name: 'Banner & Homepage', path: '/admin/banners', icon: ImageIcon },
   { name: 'Produk Unggulan', path: '/admin/featured', icon: Star },
   { name: 'Statistik Lengkap', path: '/admin/statistics', icon: TrendingUp },
+  { name: 'Pengaturan Profil', path: '/admin/profile', icon: Settings },
 ]
 
 const router = useRouter()

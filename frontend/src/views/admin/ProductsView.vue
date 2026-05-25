@@ -425,6 +425,12 @@ const formatRupiah = (number: number) => {
                   <p class="text-xs text-gray-400 mt-1">Disarankan format JPG/PNG kualitas tinggi</p>
                   <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 5MB</p>
                 </template>
+                <div v-else-if="imagePreviewUrl" class="absolute inset-0 pointer-events-none">
+                  <img :src="imagePreviewUrl" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity">
+                    <p class="text-sm text-white font-bold">Klik untuk mengganti</p>
+                  </div>
+                </div>
                 <div v-else class="flex flex-col items-center justify-center pointer-events-none">
                   <p class="text-sm text-emerald-600 font-bold">✓ 1 Gambar Terpilih</p>
                   <p class="text-xs text-gray-500 mt-2">Klik area ini untuk mengganti gambar</p>
