@@ -110,17 +110,24 @@ import { ChevronRight, MapPin, Mail, Phone, Clock, Target, Heart, Award } from '
           </div>
         </div>
 
-        <!-- Google Maps Embed -->
-        <div class="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-sm border border-gray-100 bg-white p-2">
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31612.981881512413!2d112.08183185368945!3d-7.723145618428546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e785d9b6b7a9efb%3A0x4027a76e352eba0!2sPurwoasri%2C%20Kec.%20Purwoasri%2C%20Kabupaten%20Kediri%2C%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1715500000000!5m2!1sid!2sid" 
-            width="100%" 
-            height="400" 
-            style="border:0; border-radius: 1.25rem;" 
-            allowfullscreen="false" 
-            loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade">
-          </iframe>
+        <!-- Google Maps Embed with Overlay Link -->
+        <div class="max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-sm border border-gray-100 bg-white p-2 relative group cursor-pointer">
+          <a href="https://www.google.com/maps/search/Balai+Desa+Purwoasri,+Kediri,+Jawa+Timur/" target="_blank" rel="noopener noreferrer" class="absolute inset-0 z-20 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all duration-300 rounded-3xl m-2">
+             <div class="bg-white shadow-xl text-emerald-700 font-bold px-6 py-3.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0">
+                <MapPin class="w-5 h-5" /> Buka Rute di Google Maps
+             </div>
+          </a>
+          <div class="relative z-10 pointer-events-none">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31612.981881512413!2d112.08183185368945!3d-7.723145618428546!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e785d9b6b7a9efb%3A0x4027a76e352eba0!2sPurwoasri%2C%20Kec.%20Purwoasri%2C%20Kabupaten%20Kediri%2C%20Jawa%20Timur!5e0!3m2!1sid!2sid!4v1715500000000!5m2!1sid!2sid" 
+              width="100%" 
+              height="400" 
+              style="border:0; border-radius: 1.25rem;" 
+              allowfullscreen="false" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
         </div>
       </div>
 
