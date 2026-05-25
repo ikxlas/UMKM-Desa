@@ -19,9 +19,19 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/product',
+      path: '/product/:id',
       name: 'product',
       component: ProductView,
+    },
+    {
+      path: '/merchant/:id',
+      name: 'merchant',
+      component: () => import('../views/public/MerchantView.vue'),
+    },
+    {
+      path: '/stores',
+      name: 'stores',
+      component: () => import('../views/public/StoresView.vue'),
     },
     {
       path: '/category',
@@ -69,11 +79,6 @@ const router = createRouter({
           component: () => import('../views/admin/CategoriesView.vue'),
         },
         {
-          path: 'banners',
-          name: 'admin-banners',
-          component: () => import('../views/admin/BannersView.vue'),
-        },
-        {
           path: 'featured',
           name: 'admin-featured',
           component: () => import('../views/admin/FeaturedProductsView.vue'),
@@ -82,23 +87,27 @@ const router = createRouter({
           path: 'statistics',
           name: 'admin-statistics',
           component: () => import('../views/admin/StatisticsView.vue'),
+        },
+        {
+          path: 'profile',
+          name: 'admin-profile',
+          component: () => import('../views/admin/ProfileView.vue'),
         }
       ]
     }
   ],
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
   const token = localStorage.getItem('admin_token')
 
   if (requiresAuth && !token) {
-    next({ name: 'admin-login' })
+    return { name: 'admin-login' }
   } else if (to.name === 'admin-login' && token) {
-    next({ name: 'admin-dashboard' })
-  } else {
-    next()
+    return { name: 'admin-dashboard' }
   }
+  return true
 })
 
 export default router

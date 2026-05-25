@@ -13,6 +13,7 @@ import { Search, ShoppingCart, Bell, User } from 'lucide-vue-next'
       <!-- Nav Links (Desktop) -->
       <div class="hidden md:flex items-center gap-6 text-sm text-gray-600 font-medium">
         <RouterLink to="/category" class="hover:text-emerald-600 transition-colors">Kategori</RouterLink>
+        <RouterLink to="/stores" class="hover:text-emerald-600 transition-colors">Toko</RouterLink>
         <RouterLink to="/about" class="hover:text-emerald-600 transition-colors">Tentang Kami</RouterLink>
         <RouterLink to="/help" class="hover:text-emerald-600 transition-colors">Bantuan</RouterLink>
       </div>
@@ -32,17 +33,7 @@ import { Search, ShoppingCart, Bell, User } from 'lucide-vue-next'
       </div>
     </div>
 
-    <!-- Right Icons -->
-    <div class="flex items-center gap-6">
-      <button class="text-gray-600 hover:text-emerald-600 transition-colors relative">
-        <ShoppingCart class="w-5 h-5" />
-      </button>
-      <button class="text-gray-600 hover:text-emerald-600 transition-colors relative">
-        <Bell class="w-5 h-5" />
-      </button>
-      <button class="text-gray-600 hover:text-emerald-600 transition-colors">
-        <User class="w-5 h-5" />
-      </button>
-    </div>
+    <!-- Right empty placeholder so flex-1 search bar stays centered if we need it -->
+    <div class="hidden md:block w-24"></div>
   </nav>
 </template>

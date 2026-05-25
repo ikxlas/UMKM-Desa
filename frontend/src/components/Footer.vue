@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { RouterLink } from 'vue-router'
 import { Leaf, Share2, Globe } from 'lucide-vue-next'
 </script>
 
@@ -53,7 +54,7 @@ import { Leaf, Share2, Globe } from 'lucide-vue-next'
     <!-- Bottom Bar -->
     <div class="max-w-7xl mx-auto pt-8 border-t border-gray-200 flex flex-col md:flex-row items-center justify-between gap-4">
       <p class="text-gray-500 text-sm">
-        &copy; 2024 UMKM Desa Purwoasri. Semua Hak Dilindungi.
+        &copy; {{ new Date().getFullYear() }} UMKM Desa Purwoasri. Semua Hak Dilindungi.
       </p>
       <div class="flex items-center gap-2 text-gray-500 text-sm">
         <Globe class="w-4 h-4" />
