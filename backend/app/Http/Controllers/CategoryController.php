@@ -9,7 +9,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        return response()->json(Category::orderBy('id', 'desc')->get());
+        return response()->json(Category::withCount('products')->orderBy('id', 'desc')->get());
     }
 
     public function store(Request $request)

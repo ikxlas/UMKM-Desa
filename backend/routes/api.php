@@ -33,6 +33,7 @@ Route::get('settings', [SettingController::class, 'index']);
 // Protected Admin Routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
     Route::apiResource('merchants', MerchantController::class)->except(['index', 'show']);
     Route::apiResource('products', ProductController::class)->except(['index', 'show']);
