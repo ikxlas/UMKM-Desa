@@ -11,11 +11,12 @@ class Product extends Model
 
     protected $fillable = [
         'merchant_id', 'category_id', 'name', 'description', 'price', 
-        'stock', 'unit', 'image', 'gallery_images', 'is_active', 'is_featured'
+        'stock', 'unit', 'image', 'gallery_images', 'is_active', 'is_featured', 'buy_links'
     ];
 
     protected $casts = [
         'gallery_images' => 'array',
+        'buy_links' => 'array',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
     ];
