@@ -26,7 +26,8 @@ class ProductController extends Controller
             'image_file' => 'nullable|image|max:5120',
             'gallery_files.*' => 'nullable|image|max:5120',
             'is_active' => 'boolean',
-            'is_featured' => 'boolean'
+            'is_featured' => 'boolean',
+            'buy_links' => 'nullable|string'
         ]);
 
         if ($request->hasFile('image_file')) {
@@ -43,6 +44,10 @@ class ProductController extends Controller
                 $galleryUrls[] = 'http://127.0.0.1:8000/storage/' . $path;
             }
             $validated['gallery_images'] = $galleryUrls;
+        }
+
+        if ($request->filled('buy_links')) {
+            $validated['buy_links'] = json_decode($request->input('buy_links'), true);
         }
 
         $product = Product::create($validated);
@@ -68,7 +73,8 @@ class ProductController extends Controller
             'image_file' => 'nullable|image|max:5120',
             'gallery_files.*' => 'nullable|image|max:5120',
             'is_active' => 'boolean',
-            'is_featured' => 'boolean'
+            'is_featured' => 'boolean',
+            'buy_links' => 'nullable|string'
         ]);
 
         if ($request->hasFile('image_file')) {
@@ -85,6 +91,10 @@ class ProductController extends Controller
             $validated['gallery_images'] = $galleryUrls;
         }
 
+        if ($request->has('buy_links')) {
+            $validated['buy_links'] = $request->input('buy_links') ? json_decode($request->input('buy_links'), true) : null;
+        }
+
         $product->update($validated);
         return response()->json($product->load(['category', 'merchant']));
     }
@@ -93,5 +103,22 @@ class ProductController extends Controller
     {
         $product->delete();
         return response()->json(null, 204);
+    }
+
+    public function trackView(Product $product)
+    {
+        $product->increment('view_count');
+        return response()->json(['status' => 'success', 'views' => $product->view_count]);
+    }
+
+    public function trackClick(Request $request, Product $product)
+    {
+        $type = $request->input('type');
+        if (in_array($type, ['wa', 'grab', 'go', 'shopee'])) {
+            $column = $type === 'wa' ? 'wa_clicks' : $type . '_clicks';
+            $product->increment($column);
+            return response()->json(['status' => 'success', $column => $product->$column]);
+        }
+        return response()->json(['status' => 'error', 'message' => 'Invalid type'], 400);
     }
 }

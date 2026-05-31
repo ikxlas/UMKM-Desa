@@ -28,6 +28,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 Route::apiResource('merchants', MerchantController::class)->only(['index', 'show']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
+Route::post('products/{product}/track-view', [ProductController::class, 'trackView']);
+Route::post('products/{product}/track-click', [ProductController::class, 'trackClick']);
 Route::get('settings', [SettingController::class, 'index']);
 
 // Protected Admin Routes

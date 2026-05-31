@@ -17,7 +17,7 @@ class MerchantController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'owner_name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'description' => 'nullable|string',
             'logo' => 'nullable|string',
@@ -54,7 +54,7 @@ class MerchantController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'owner_name' => 'sometimes|required|string|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'description' => 'nullable|string',
             'logo' => 'nullable|string',
