@@ -34,6 +34,7 @@ const fetchProductData = async () => {
     if (resProd.ok) {
         product.value = await resProd.json()
         activeImage.value = getProductImage(product.value)
+        if (id) trackView(id as string)
     }
 
     if (resAll.ok) {
@@ -44,6 +45,20 @@ const fetchProductData = async () => {
     console.error("Gagal menarik data produk detail:", err)
   } finally {
     isLoading.value = false
+  }
+}
+
+const trackView = (productId: string | number) => {
+  fetch(`http://127.0.0.1:8000/api/products/${productId}/track-view`, { method: 'POST' }).catch(() => {})
+}
+
+const trackClick = (type: string) => {
+  if (product.value?.id) {
+    fetch(`http://127.0.0.1:8000/api/products/${product.value.id}/track-click`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type })
+    }).catch(() => {})
   }
 }
 
@@ -96,10 +111,25 @@ const relatedProducts = computed(() => {
 const getWhatsAppLink = (m: any, p: any) => {
     let phone = '6281234567890';
     if(m && m.phone) phone = m.phone;
+    
+    if (phone.includes('wa.me') || phone.startsWith('http')) {
+        return phone;
+    }
+    
+    phone = phone.replace(/[^0-9]/g, '');
     if(phone.startsWith('0')) phone = '62' + phone.substring(1);
     const text = `Halo Admin ${m?.name || 'Toko'}, saya tertarik untuk memesan produk *${p?.name}* dengan harga ${formatPrice(p?.price || 0)}.`;
     return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 }
+
+const buyLinksParsed = computed(() => {
+  let links = product.value?.buy_links;
+  if (!links) return {};
+  if (typeof links === 'string') {
+    try { return JSON.parse(links); } catch(e) { return {}; }
+  }
+  return links;
+})
 
 </script>
 
@@ -190,22 +220,22 @@ const getWhatsAppLink = (m: any, p: any) => {
               <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <ShoppingBag class="w-5 h-5 text-emerald-600" /> Opsi Pemesanan Langsung
               </h3>
-              <div class="grid grid-cols-2 gap-4">
-                <a :href="getWhatsAppLink(product.merchant, product)" target="_blank" class="bg-[#25D366] hover:bg-[#20b858] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#25D366]/20">
+              <div class="flex flex-wrap gap-4">
+                <a :href="buyLinksParsed?.whatsapp || getWhatsAppLink(product.merchant, product)" target="_blank" @click="trackClick('wa')" class="flex-1 min-w-[140px] bg-[#25D366] hover:bg-[#20b858] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#25D366]/20">
                   <img src="https://cdn.simpleicons.org/whatsapp/white" alt="WhatsApp" class="w-5 h-5" /> WhatsApp
                 </a>
                 
-                <button class="bg-[#00B14F] hover:bg-[#009643] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#00B14F]/20">
+                <a v-if="buyLinksParsed?.grabfood" :href="buyLinksParsed.grabfood" target="_blank" @click="trackClick('grab')" class="flex-1 min-w-[140px] bg-[#00B14F] hover:bg-[#009643] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#00B14F]/20">
                   <img src="https://cdn.simpleicons.org/grab/white" alt="GrabFood" class="w-5 h-5" /> GrabFood
-                </button>
+                </a>
                 
-                <button class="bg-[#EE2737] hover:bg-[#d62130] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#EE2737]/20">
+                <a v-if="buyLinksParsed?.gofood" :href="buyLinksParsed.gofood" target="_blank" @click="trackClick('go')" class="flex-1 min-w-[140px] bg-[#EE2737] hover:bg-[#d62130] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#EE2737]/20">
                   <img src="https://cdn.simpleicons.org/gojek/white" alt="GoFood" class="w-5 h-5" /> GoFood
-                </button>
+                </a>
 
-                <button class="bg-[#EE4D2D] hover:bg-[#d64326] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#EE4D2D]/20">
+                <a v-if="buyLinksParsed?.shopee" :href="buyLinksParsed.shopee" target="_blank" @click="trackClick('shopee')" class="flex-1 min-w-[140px] bg-[#EE4D2D] hover:bg-[#d64326] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#EE4D2D]/20">
                   <img src="https://cdn.simpleicons.org/shopee/white" alt="Shopee" class="w-5 h-5" /> Shopee
-                </button>
+                </a>
               </div>
             </div>
           </div>

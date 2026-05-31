@@ -8,7 +8,9 @@ import {
   Phone,
   LayoutGrid,
   Info,
-  CalendarDays
+  CalendarDays,
+  Instagram,
+  Facebook
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -66,10 +68,28 @@ const getProductImage = (p: any) => {
 const getWhatsAppLink = (m: any) => {
     let phone = '6281234567890';
     if(m && m.phone) phone = m.phone;
+    
+    if (phone.includes('wa.me') || phone.startsWith('http')) {
+        return phone;
+    }
+    
+    phone = phone.replace(/[^0-9]/g, '');
     if(phone.startsWith('0')) phone = '62' + phone.substring(1);
     const text = `Halo Admin ${m?.name || 'Toko'}, saya ingin bertanya seputar produk di toko Anda.`;
     return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 }
+
+const socialMedia = computed(() => {
+  let social = { instagram: '', facebook: '', tiktok: '' };
+  if (merchant.value?.social_media) {
+    try {
+      social = typeof merchant.value.social_media === 'string' 
+                ? JSON.parse(merchant.value.social_media) 
+                : merchant.value.social_media;
+    } catch (e) {}
+  }
+  return social;
+});
 
 </script>
 
@@ -118,7 +138,6 @@ const getWhatsAppLink = (m: any) => {
                     <h1 class="text-3xl font-extrabold text-gray-900 mb-2">{{ merchant.name }}</h1>
                     <div class="flex flex-wrap gap-4 text-sm text-gray-600 font-medium">
                        <div class="flex items-center gap-1.5"><Store class="w-4 h-4 text-emerald-600" /> Pemilik: <span class="font-bold">{{ merchant.owner_name || '-' }}</span></div>
-                       <div class="flex items-center gap-1.5"><MapPin class="w-4 h-4 text-emerald-600" /> {{ merchant.address || 'Alamat tidak tersedia' }}</div>
                        <div class="flex items-center gap-1.5"><LayoutGrid class="w-4 h-4 text-emerald-600" /> {{ merchantProducts.length }} Produk</div>
                     </div>
                   </div>
@@ -131,14 +150,71 @@ const getWhatsAppLink = (m: any) => {
               </div>
             </div>
 
-            <!-- Description with scroll handler -->
-            <div class="mt-8 bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100">
-              <h3 class="flex items-center gap-2 text-sm font-bold text-gray-900 mb-3">
-                <Info class="w-4 h-4 text-emerald-600" /> Tentang Usaha Kami
-              </h3>
-              <div class="text-gray-700 text-sm sm:text-base leading-relaxed whitespace-pre-wrap min-h-[120px] max-h-[400px] overflow-y-auto pr-2" style="scrollbar-width: thin; scrollbar-color: #34d399 transparent;">
-                {{ merchant.description || 'Toko UMKM ini belum menuliskan deskripsi profil usahanya. Dukung terus produk lokal desa ini!' }}
+            <!-- Content Grid: Description & Contacts -->
+            <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+              
+              <!-- Description Box -->
+              <div class="lg:col-span-2 bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100">
+                <h3 class="flex items-center gap-2 text-sm font-bold text-gray-900 mb-3">
+                  <Info class="w-4 h-4 text-emerald-600" /> Tentang Usaha Kami
+                </h3>
+                <div class="text-gray-700 text-sm sm:text-base leading-relaxed whitespace-pre-wrap min-h-[120px] max-h-[400px] overflow-y-auto pr-2" style="scrollbar-width: thin; scrollbar-color: #34d399 transparent;">
+                  {{ merchant.description || 'Toko UMKM ini belum menuliskan deskripsi profil usahanya. Dukung terus produk lokal desa ini!' }}
+                </div>
               </div>
+
+              <!-- Contact & Location Box -->
+              <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-fit">
+                <h3 class="flex items-center gap-2 text-base font-bold text-gray-900 mb-5 relative pb-3">
+                  <Phone class="w-5 h-5 text-emerald-600" /> Lokasi & Kontak
+                  <div class="absolute bottom-0 left-0 w-12 h-1 bg-emerald-500 rounded-full"></div>
+                </h3>
+                
+                <div class="space-y-6">
+                  <!-- Alamat -->
+                  <div class="flex gap-4 group">
+                    <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 group-hover:bg-emerald-100 transition-colors">
+                      <MapPin class="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p class="text-sm font-bold text-gray-900">Alamat Lengkap</p>
+                      <p class="text-sm text-gray-600 mt-1.5 leading-relaxed">{{ merchant.address || 'Alamat tidak tersedia' }}</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Social Media Section -->
+                  <div v-if="socialMedia.instagram || socialMedia.facebook || socialMedia.tiktok" class="pt-6 border-t border-gray-100">
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4">Terhubung Bersama Kami</p>
+                    
+                    <div class="flex flex-col gap-3">
+                      <!-- Instagram -->
+                      <a v-if="socialMedia.instagram" :href="socialMedia.instagram" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-pink-500 hover:shadow-md transition-all duration-300 group">
+                        <div class="w-9 h-9 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0 group-hover:border-pink-200 transition-colors">
+                          <Instagram class="w-4 h-4 text-pink-500" />
+                        </div>
+                        <span class="text-sm font-bold text-gray-700 group-hover:text-pink-600 transition-colors">Instagram</span>
+                      </a>
+                      
+                      <!-- Facebook -->
+                      <a v-if="socialMedia.facebook" :href="socialMedia.facebook" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-blue-500 hover:shadow-md transition-all duration-300 group">
+                        <div class="w-9 h-9 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0 group-hover:border-blue-200 transition-colors">
+                          <Facebook class="w-4 h-4 text-blue-600" />
+                        </div>
+                        <span class="text-sm font-bold text-gray-700 group-hover:text-blue-700 transition-colors">Facebook</span>
+                      </a>
+                      
+                      <!-- TikTok -->
+                      <a v-if="socialMedia.tiktok" :href="socialMedia.tiktok" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-gray-900 hover:shadow-md transition-all duration-300 group">
+                        <div class="w-9 h-9 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0 group-hover:border-gray-300 transition-colors">
+                          <img src="https://cdn.simpleicons.org/tiktok/currentColor" class="w-4 h-4 text-gray-800 group-hover:text-black" />
+                        </div>
+                        <span class="text-sm font-bold text-gray-700 group-hover:text-black transition-colors">TikTok</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
             </div>
             
           </div>
