@@ -53,7 +53,8 @@ const formData = ref({
   image: '/images/kripik_main.png',
   gallery_images: [] as string[],
   is_active: true,
-  is_featured: false
+  is_featured: false,
+  buy_links: { whatsapp: '', grabfood: '', gofood: '', shopee: '' }
 })
 
 const fetchData = async () => {
@@ -90,13 +91,29 @@ const openAddForm = () => {
     image: '/images/kripik_main.png',
     gallery_images: [],
     is_active: true,
-    is_featured: false
+    is_featured: false,
+    buy_links: { whatsapp: '', grabfood: '', gofood: '', shopee: '' }
   }
   isFormMode.value = true
 }
 
 const openEditForm = (product: any) => {
   editingProductId.value = product.id
+  
+  let parsedBuyLinks = { whatsapp: '', grabfood: '', gofood: '', shopee: '' }
+  if (product.buy_links) {
+    try {
+      parsedBuyLinks = typeof product.buy_links === 'string' ? JSON.parse(product.buy_links) : product.buy_links
+    } catch(e) {}
+  }
+  
+  let parsedGallery = []
+  if (product.gallery_images) {
+    try {
+      parsedGallery = typeof product.gallery_images === 'string' ? JSON.parse(product.gallery_images) : product.gallery_images
+    } catch(e) {}
+  }
+
   formData.value = {
     name: product.name,
     category_id: product.category_id,
@@ -106,10 +123,15 @@ const openEditForm = (product: any) => {
     stock: product.stock,
     unit: product.unit || 'pcs',
     image: product.image || '/images/kripik_main.png',
-    gallery_images: product.gallery_images || [],
+    gallery_images: parsedGallery,
     is_active: product.is_active,
-    is_featured: product.is_featured
+    is_featured: product.is_featured,
+    buy_links: parsedBuyLinks
   }
+  imagePreviewUrl.value = ''
+  galleryPreviewUrls.value = []
+  imageFile.value = null
+  galleryFiles.value = []
   isFormMode.value = true
 }
 
@@ -168,6 +190,7 @@ const saveProduct = async () => {
     payload.append('unit', formData.value.unit || 'pcs')
     payload.append('is_active', formData.value.is_active ? '1' : '0')
     payload.append('is_featured', formData.value.is_featured ? '1' : '0')
+    payload.append('buy_links', JSON.stringify(formData.value.buy_links))
 
     if (imageFile.value) {
       payload.append('image_file', imageFile.value)
@@ -179,20 +202,31 @@ const saveProduct = async () => {
 
     if (editingProductId.value) {
       payload.append('_method', 'PUT')
-      await fetch(`http://127.0.0.1:8000/api/products/${editingProductId.value}`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/products/${editingProductId.value}`, {
         method: 'POST',
+        headers: { 'Accept': 'application/json' },
         body: payload
       })
+      if (!response.ok) {
+        const err = await response.json()
+        throw new Error(err.message || 'Gagal memperbarui produk')
+      }
     } else {
-      await fetch('http://127.0.0.1:8000/api/products', {
+      const response = await fetch('http://127.0.0.1:8000/api/products', {
         method: 'POST',
+        headers: { 'Accept': 'application/json' },
         body: payload
       })
+      if (!response.ok) {
+        const err = await response.json()
+        throw new Error(err.message || 'Gagal menyimpan produk')
+      }
     }
     await fetchData()
     closeForm()
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error saving product:', error)
+    alert(error.message || 'Terjadi kesalahan saat menyimpan produk.')
   }
 }
 
@@ -384,25 +418,25 @@ const formatRupiah = (number: number) => {
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <img src="https://cdn.simpleicons.org/whatsapp/25D366" class="w-4 h-4" /> WhatsApp
                 </label>
-                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/62..." />
+                <input v-model="formData.buy_links.whatsapp" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://wa.me/62..." />
               </div>
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <img src="https://cdn.simpleicons.org/grab/00B14F" class="w-4 h-4" /> GrabFood
                 </label>
-                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Link GrabFood..." />
+                <input v-model="formData.buy_links.grabfood" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Link GrabFood..." />
               </div>
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <img src="https://cdn.simpleicons.org/gojek/EE2737" class="w-4 h-4" /> GoFood
                 </label>
-                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Link GoFood..." />
+                <input v-model="formData.buy_links.gofood" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Link GoFood..." />
               </div>
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <img src="https://cdn.simpleicons.org/shopee/EE4D2D" class="w-4 h-4" /> Shopee
                 </label>
-                <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Link Shopee..." />
+                <input v-model="formData.buy_links.shopee" type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Link Shopee..." />
               </div>
             </div>
           </div>
@@ -425,15 +459,11 @@ const formatRupiah = (number: number) => {
                   <p class="text-xs text-gray-400 mt-1">Disarankan format JPG/PNG kualitas tinggi</p>
                   <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 5MB</p>
                 </template>
-                <div v-else-if="imagePreviewUrl" class="absolute inset-0 pointer-events-none">
-                  <img :src="imagePreviewUrl" class="w-full h-full object-cover" />
+                <div v-else class="absolute inset-0 pointer-events-none">
+                  <img :src="imagePreviewUrl || formData.image" class="w-full h-full object-cover" />
                   <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity">
                     <p class="text-sm text-white font-bold">Klik untuk mengganti</p>
                   </div>
-                </div>
-                <div v-else class="flex flex-col items-center justify-center pointer-events-none">
-                  <p class="text-sm text-emerald-600 font-bold">✓ 1 Gambar Terpilih</p>
-                  <p class="text-xs text-gray-500 mt-2">Klik area ini untuk mengganti gambar</p>
                 </div>
               </div>
             </div>

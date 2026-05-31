@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { 
   MessageCircle, 
   ShoppingBag, 
@@ -10,25 +10,68 @@ import {
   Award
 } from 'lucide-vue-next'
 
-// Mock Data Metrik Klik (Biasanya dari API Analytics Backend)
 const clickMetrics = ref([
-  { id: 'wa', name: 'WhatsApp', total: 1245, color: 'bg-emerald-500', icon: MessageCircle, trend: '+12% minggu ini' },
-  { id: 'grab', name: 'GrabFood', total: 856, color: 'bg-green-500', icon: ShoppingBag, trend: '+5% minggu ini' },
-  { id: 'go', name: 'GoFood', total: 920, color: 'bg-red-500', icon: ShoppingBag, trend: '+8% minggu ini' },
-  { id: 'shopee', name: 'Shopee', total: 1540, color: 'bg-orange-500', icon: Store, trend: '+24% minggu ini' },
+  { id: 'wa', name: 'WhatsApp', total: 0, color: 'bg-emerald-500', icon: MessageCircle, trend: 'Aktif' },
+  { id: 'grab', name: 'GrabFood', total: 0, color: 'bg-green-500', icon: ShoppingBag, trend: 'Aktif' },
+  { id: 'go', name: 'GoFood', total: 0, color: 'bg-red-500', icon: ShoppingBag, trend: 'Aktif' },
+  { id: 'shopee', name: 'Shopee', total: 0, color: 'bg-orange-500', icon: Store, trend: 'Aktif' },
 ])
 
-// Total keseluruhan untuk kalkulasi persentase bar
-const totalClicks = clickMetrics.value.reduce((sum, item) => sum + item.total, 0)
+const totalClicks = computed(() => {
+  const sum = clickMetrics.value.reduce((s, item) => s + item.total, 0)
+  return sum === 0 ? 1 : sum // prevent division by zero
+})
+const realTotal = computed(() => clickMetrics.value.reduce((s, item) => s + item.total, 0))
 
-// Mock Data Produk Terpopuler (Leaderboard)
-const topViewedProducts = ref([
-  { id: 1, name: 'Kripik Tempe Renyah', merchant: 'Pak Budi Snack', views: 5430, image: '/images/kripik_main.png' },
-  { id: 2, name: 'Anyaman Bambu Premium', merchant: 'Bengkel Kayu Jati', views: 4215, image: '/images/prod_bamboo.png' },
-  { id: 3, name: 'Emping Melinjo Super', merchant: 'Ibu Siti Kerupuk', views: 3890, image: '/images/emping_main.png' },
-  { id: 4, name: 'Kerajinan Kayu Ukir', merchant: 'Bengkel Kayu Jati', views: 2750, image: '/images/merchant_wood.png' },
-  { id: 5, name: 'Madu Hutan Asli', merchant: 'Kebun Purwo', views: 1980, image: '/images/merchant.png' },
-])
+const topViewedProducts = ref<any[]>([])
+const isLoading = ref(true)
+
+onMounted(async () => {
+  try {
+    const [prodRes, merchRes] = await Promise.all([
+      fetch('http://127.0.0.1:8000/api/products'),
+      fetch('http://127.0.0.1:8000/api/merchants')
+    ])
+    
+    const pData = await prodRes.json()
+    const mData = await merchRes.json()
+    
+    const productsList = Array.isArray(pData) ? pData : (pData.data || [])
+    const merchantsList = Array.isArray(mData) ? mData : (mData.data || [])
+
+    let waCount = 0; let grabCount = 0; let goCount = 0; let shopeeCount = 0;
+
+    productsList.forEach((p: any) => {
+      waCount += p.wa_clicks || 0
+      grabCount += p.grab_clicks || 0
+      goCount += p.go_clicks || 0
+      shopeeCount += p.shopee_clicks || 0
+    })
+
+    if (clickMetrics.value[0]) clickMetrics.value[0].total = waCount
+    if (clickMetrics.value[1]) clickMetrics.value[1].total = grabCount
+    if (clickMetrics.value[2]) clickMetrics.value[2].total = goCount
+    if (clickMetrics.value[3]) clickMetrics.value[3].total = shopeeCount
+
+    const mappedProducts = productsList.map((p: any) => {
+      return {
+        id: p.id,
+        name: p.name,
+        merchant: merchantsList.find((m: any) => m.id == p.merchant_id)?.name || 'Unknown',
+        views: p.view_count || 0,
+        image: p.image || '/images/prod_1.png'
+      }
+    })
+
+    mappedProducts.sort((a: any, b: any) => b.views - a.views)
+    topViewedProducts.value = mappedProducts.slice(0, 5)
+
+  } catch (err) {
+    console.error('Error fetching statistics:', err)
+  } finally {
+    isLoading.value = false
+  }
+})
 </script>
 
 <template>
@@ -38,11 +81,11 @@ const topViewedProducts = ref([
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <h1 class="text-2xl font-bold text-gray-900">Statistik Lengkap</h1>
-        <p class="text-sm text-gray-500 mt-1">Pantau analitik klik pembelian dan popularitas produk di website.</p>
+        <p class="text-sm text-gray-500 mt-1">Pantau analitik jumlah klik pesanan dan total tayangan produk secara riil.</p>
       </div>
       <div class="bg-white px-4 py-2 rounded-lg border border-gray-200 shadow-sm flex items-center gap-2">
         <span class="text-sm text-gray-500">Total Interaksi:</span>
-        <span class="font-bold text-gray-900">{{ totalClicks.toLocaleString('id-ID') }} Klik</span>
+        <span class="font-bold text-gray-900">{{ realTotal.toLocaleString('id-ID') }} Klik</span>
       </div>
     </div>
 
@@ -98,9 +141,9 @@ const topViewedProducts = ref([
           
           <div class="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-100">
             <p class="text-sm text-blue-800 leading-relaxed">
-              <span class="font-bold">Insight:</span> Sebagian besar pengunjung lebih suka melakukan transaksi melalui 
-              <span class="font-bold">Shopee ({{ Math.round((1540 / totalClicks) * 100) }}%)</span> dan 
-              <span class="font-bold">WhatsApp ({{ Math.round((1245 / totalClicks) * 100) }}%)</span>.
+              <span class="font-bold">Insight:</span> Proporsi klik pemesanan yang paling difavoritkan pembeli adalah 
+              <span class="font-bold">Shopee ({{ Math.round(((clickMetrics[3]?.total || 0) / totalClicks) * 100) }}%)</span> dan 
+              <span class="font-bold">GoFood ({{ Math.round(((clickMetrics[2]?.total || 0) / totalClicks) * 100) }}%)</span> dibandingkan yang lain, di luar WhatsApp.
             </p>
           </div>
         </div>
@@ -128,7 +171,15 @@ const topViewedProducts = ref([
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
-                <tr v-for="(prod, index) in topViewedProducts" :key="prod.id" class="hover:bg-gray-50/50 transition-colors">
+                <tr v-if="isLoading">
+                  <td colspan="4" class="text-center py-12">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto"></div>
+                  </td>
+                </tr>
+                <tr v-else-if="topViewedProducts.length === 0">
+                  <td colspan="4" class="text-center py-12 text-gray-500">Belum ada produk yang terdaftar.</td>
+                </tr>
+                <tr v-else v-for="(prod, index) in topViewedProducts" :key="prod.id" class="hover:bg-gray-50/50 transition-colors">
                   <td class="py-4 px-6 text-center">
                     <!-- Medal untuk Top 3 -->
                     <div v-if="index === 0" class="w-8 h-8 mx-auto bg-amber-100 text-amber-600 rounded-full flex items-center justify-center font-bold">1</div>

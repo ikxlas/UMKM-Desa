@@ -10,6 +10,7 @@ import {
   Save,
   MapPin,
   Phone,
+  Link,
   Instagram,
   Facebook
 } from 'lucide-vue-next'
@@ -38,6 +39,7 @@ const formData = ref({
   phone: '',
   instagram: '',
   facebook: '',
+  tiktok: '',
   logo: '/images/merchant.png',
   storefront_image: ''
 })
@@ -62,8 +64,16 @@ onMounted(() => {
 const openAddForm = () => {
   editingMerchantId.value = null
   formData.value = {
-    name: '', owner_name: '', description: '', address: '',
-    phone: '', instagram: '', facebook: '', logo: '/images/merchant.png', storefront_image: ''
+    name: '', 
+    owner_name: '', 
+    description: '', 
+    address: '',
+    phone: '', 
+    instagram: '',
+    facebook: '',
+    tiktok: '',
+    logo: '/images/merchant.png', 
+    storefront_image: ''
   }
   isFormMode.value = true
 }
@@ -71,7 +81,7 @@ const openAddForm = () => {
 const openEditForm = (merchant: any) => {
   editingMerchantId.value = merchant.id
   
-  let social = { instagram: '', facebook: '' }
+  let social: Record<string, string> = { instagram: '', facebook: '', tiktok: '' }
   if (merchant.social_media) {
     try { social = JSON.parse(merchant.social_media) } catch(e) {}
   }
@@ -84,9 +94,12 @@ const openEditForm = (merchant: any) => {
     phone: merchant.phone || '',
     instagram: social.instagram || '',
     facebook: social.facebook || '',
+    tiktok: social.tiktok || '',
     logo: merchant.logo || '/images/merchant.png',
     storefront_image: merchant.storefront_image || ''
   }
+  logoPreviewUrl.value = formData.value.logo !== '/images/merchant.png' ? formData.value.logo : ''
+  storefrontPreviewUrl.value = formData.value.storefront_image
   isFormMode.value = true
 }
 
@@ -129,7 +142,8 @@ const saveMerchant = async () => {
   payload.append('phone', formData.value.phone)
   payload.append('social_media', JSON.stringify({
     instagram: formData.value.instagram,
-    facebook: formData.value.facebook
+    facebook: formData.value.facebook,
+    tiktok: formData.value.tiktok
   }))
 
   if (logoFile.value) {
@@ -144,21 +158,32 @@ const saveMerchant = async () => {
     if (editingMerchantId.value) {
       // UPDATE
       payload.append('_method', 'PUT')
-      await fetch(`http://127.0.0.1:8000/api/merchants/${editingMerchantId.value}`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/merchants/${editingMerchantId.value}`, {
         method: 'POST',
+        headers: { 'Accept': 'application/json' },
         body: payload
       })
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Gagal memperbarui merchant')
+      }
     } else {
       // CREATE
-      await fetch('http://127.0.0.1:8000/api/merchants', {
+      const response = await fetch('http://127.0.0.1:8000/api/merchants', {
         method: 'POST',
+        headers: { 'Accept': 'application/json' },
         body: payload
       })
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || 'Gagal menyimpan merchant')
+      }
     }
     await fetchMerchants()
     closeForm()
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error saving merchant:', error)
+    alert(error.message || 'Terjadi kesalahan saat menyimpan data.')
   }
 }
 
@@ -229,7 +254,13 @@ const deleteMerchant = async (id: number) => {
                   <img :src="merchant.logo || '/images/merchant.png'" alt="Logo" class="w-10 h-10 rounded-full object-cover border border-gray-200" />
                   <span class="font-bold text-gray-900">{{ merchant.name }}</span>
                 </td>
-                <td class="py-4 px-6 font-medium text-gray-600">{{ merchant.phone || '-' }}</td>
+                <td class="py-4 px-6 font-medium text-gray-600 truncate max-w-xs">
+                  <span v-if="!merchant.phone">-</span>
+                  <a v-else-if="merchant.phone.startsWith('http')" :href="merchant.phone" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold hover:bg-emerald-100 transition-colors border border-emerald-100">
+                    <Link class="w-3 h-3" /> Tautan Teks
+                  </a>
+                  <span v-else>{{ merchant.phone }}</span>
+                </td>
                 <td class="py-4 px-6 text-gray-500 truncate max-w-xs">{{ merchant.address || '-' }}</td>
                 <td class="py-4 px-6 text-right">
                   <div class="flex items-center justify-end gap-2">
@@ -309,13 +340,19 @@ const deleteMerchant = async (id: number) => {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
-                  <Phone class="w-4 h-4 text-emerald-600" /> Nomor WhatsApp
+                  <Phone class="w-4 h-4 text-emerald-600" /> Link WhatsApp
                 </label>
                 <input v-model="formData.phone" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="0812-3456-7890" />
               </div>
+              <div class="space-y-1.5">
+                <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <img src="https://cdn.simpleicons.org/tiktok/111111" class="w-4 h-4" /> Link TikTok
+                </label>
+                <input v-model="formData.tiktok" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="https://tiktok.com/@..." />
+              </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
               <div class="space-y-1.5">
                 <label class="text-sm font-medium text-gray-700 flex items-center gap-2">
                   <Instagram class="w-4 h-4 text-pink-600" /> Link Instagram
@@ -341,7 +378,7 @@ const deleteMerchant = async (id: number) => {
             <h3 class="font-bold text-gray-900 mb-4 border-b border-gray-100 pb-2">Logo Usaha</h3>
             <div class="border-2 border-dashed border-gray-300 rounded-full w-32 h-32 mx-auto flex flex-col items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer group relative overflow-hidden">
               <input type="file" accept="image/*" @change="handleLogoUpload" class="absolute inset-0 opacity-0 cursor-pointer z-20" />
-              <template v-if="!logoPreviewUrl">
+              <template v-if="!logoPreviewUrl && !formData.logo">
                 <ImageIcon class="w-6 h-6 text-gray-400 mb-1 group-hover:text-emerald-500" />
                 <span class="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Unggah</span>
               </template>
