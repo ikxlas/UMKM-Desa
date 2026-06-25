@@ -155,7 +155,7 @@ const removeProduct = (settingKey: string, id: number) => {
             </button>
           </div>
 
-          <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50">
+          <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50 max-h-80 overflow-y-auto custom-scrollbar">
             <ul class="divide-y divide-gray-100">
               <li v-if="trendingProducts.length === 0" class="p-8 text-center text-gray-500 text-sm">
                 Belum ada produk di daftar ini.
@@ -211,7 +211,7 @@ const removeProduct = (settingKey: string, id: number) => {
             </button>
           </div>
 
-          <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50">
+          <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50 max-h-80 overflow-y-auto custom-scrollbar">
             <ul class="divide-y divide-gray-100">
               <li v-if="bestSellerProducts.length === 0" class="p-8 text-center text-gray-500 text-sm">
                 Belum ada produk di daftar ini.
@@ -267,7 +267,7 @@ const removeProduct = (settingKey: string, id: number) => {
             </button>
           </div>
 
-          <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50">
+          <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50 max-h-80 overflow-y-auto custom-scrollbar">
             <ul class="divide-y divide-gray-100">
               <li v-if="recommendedProducts.length === 0" class="p-8 text-center text-gray-500 text-sm">
                 Belum ada produk di daftar ini.
@@ -293,3 +293,16 @@ const removeProduct = (settingKey: string, id: number) => {
     </template>
   </div>
 </template>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+</style>
