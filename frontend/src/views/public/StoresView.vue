@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { Store, MapPin, ChevronRight, Package, Search } from 'lucide-vue-next'
 
@@ -27,6 +27,21 @@ const displayedMerchants = computed(() => {
     return merchants.value.filter(m =>
         m.name.toLowerCase().includes(query)
     )
+})
+
+const currentPage = ref(1)
+const itemsPerPage = ref(12)
+
+const totalPages = computed(() => Math.ceil(displayedMerchants.value.length / itemsPerPage.value))
+
+const paginatedMerchants = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage.value
+    const end = start + itemsPerPage.value
+    return displayedMerchants.value.slice(start, end)
+})
+
+watch(() => route.query.q, () => {
+    currentPage.value = 1
 })
 
 const displayTitle = computed(() => {
@@ -72,7 +87,7 @@ const displayTitle = computed(() => {
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           <RouterLink 
-            v-for="m in displayedMerchants" 
+            v-for="m in paginatedMerchants" 
             :key="m.id" 
             :to="`/merchant/${m.id}`" 
             class="bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition-shadow flex flex-col group"
@@ -109,6 +124,16 @@ const displayTitle = computed(() => {
             </div>
           </RouterLink>
         </div>
+
+        <!-- Pagination Controls -->
+        <div v-if="totalPages > 1" class="mt-8 flex justify-center items-center gap-2">
+          <button @click="currentPage--" :disabled="currentPage === 1" class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm font-medium transition-colors" :class="currentPage === 1 ? 'opacity-50 cursor-not-allowed text-gray-400' : 'text-gray-600 hover:bg-gray-50'">Prev</button>
+          <div class="flex items-center gap-1">
+            <button v-for="p in totalPages" :key="p" @click="currentPage = p" class="w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-colors" :class="currentPage === p ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200'">{{ p }}</button>
+          </div>
+          <button @click="currentPage++" :disabled="currentPage === totalPages" class="px-3 py-1.5 rounded-lg border border-gray-200 text-sm font-medium transition-colors" :class="currentPage === totalPages ? 'opacity-50 cursor-not-allowed text-gray-400' : 'text-gray-600 hover:bg-gray-50'">Next</button>
+        </div>
+
       </div>
 
     </div>
