@@ -222,7 +222,7 @@ const getRandomSoldInfo = (id: number) => {
       <!-- Categories Section -->
       <div v-if="categories.length" class="px-4 md:px-12 mt-8 md:mt-12">
         <div class="flex items-center justify-start gap-8 md:gap-16 overflow-x-auto pb-4 hide-scrollbar">
-          <RouterLink to="/category" v-for="cat in categories" :key="cat.id" class="flex flex-col items-center gap-3 cursor-pointer group min-w-[80px]">
+          <RouterLink :to="`/category?categoryId=${cat.id}`" v-for="cat in categories" :key="cat.id" class="flex flex-col items-center gap-3 cursor-pointer group min-w-[80px]">
             <div class="w-16 h-16 rounded-full bg-white border border-gray-100 shadow-sm flex items-center justify-center text-emerald-600 group-hover:bg-emerald-50 group-hover:border-emerald-200 transition-colors overflow-hidden">
                <img v-if="cat.icon_type === 'custom'" :src="cat.icon_value" class="w-full h-full object-cover rounded-full" />
                <component v-else :is="getIcon(cat.icon_value)" class="w-7 h-7" />
@@ -239,7 +239,7 @@ const getRandomSoldInfo = (id: number) => {
             <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">Produk Terlaris</h2>
             <p class="text-gray-500 text-sm">Koleksi favorit pelanggan minggu ini</p>
           </div>
-          <RouterLink to="/category" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
+          <RouterLink to="/category?filter=bestseller" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
@@ -272,7 +272,7 @@ const getRandomSoldInfo = (id: number) => {
             <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">Rekomendasi Kami</h2>
             <p class="text-gray-500 text-xs md:text-sm">Produk kurasi terbaik dari admin</p>
           </div>
-          <RouterLink to="/category" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
+          <RouterLink to="/category?filter=recommended" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
@@ -302,7 +302,7 @@ const getRandomSoldInfo = (id: number) => {
             <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">Banyak Dicari</h2>
             <p class="text-gray-500 text-xs md:text-sm">Produk yang sedang trending saat ini</p>
           </div>
-          <RouterLink to="/category" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
+          <RouterLink to="/category?filter=trending" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
