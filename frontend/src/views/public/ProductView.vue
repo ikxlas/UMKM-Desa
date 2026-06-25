@@ -135,7 +135,7 @@ const buyLinksParsed = computed(() => {
 
 <template>
   <main class="min-h-screen bg-gray-50 pb-20 pt-6">
-    <div class="max-w-7xl mx-auto px-6 md:px-12">
+    <div class="max-w-7xl mx-auto px-4 md:px-12">
       
       <div v-if="isLoading" class="flex justify-center py-32">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
@@ -149,7 +149,7 @@ const buyLinksParsed = computed(() => {
 
       <div v-else>
         <!-- Breadcrumbs -->
-        <nav class="flex flex-wrap items-center gap-2 text-sm text-gray-500 mb-8">
+        <nav class="flex flex-wrap items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-500 mb-5 md:mb-8">
           <RouterLink to="/" class="hover:text-emerald-600 transition-colors">Home</RouterLink>
           <ChevronRight class="w-4 h-4" />
           <RouterLink to="/category" class="hover:text-emerald-600 transition-colors">{{ product.category?.name || 'Katalog' }}</RouterLink>
@@ -158,7 +158,7 @@ const buyLinksParsed = computed(() => {
         </nav>
 
         <!-- Main Product Area -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 mb-10 md:mb-16">
           <!-- Left: Image Gallery -->
           <div class="flex flex-col gap-4">
             <!-- Main Image -->
@@ -199,19 +199,19 @@ const buyLinksParsed = computed(() => {
             </div>
 
             <!-- Title -->
-            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">{{ product.name }}</h1>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 md:mb-4 leading-tight">{{ product.name }}</h1>
 
 
 
             <!-- Price -->
-            <div class="flex items-end gap-2 mb-8 bg-gray-50/50 p-4 border border-gray-100 rounded-2xl w-max">
-              <span class="text-4xl font-extrabold text-emerald-600">{{ formatPrice(product.price) }}</span>
-              <span class="text-gray-500 mb-1 font-medium">/ {{ product.unit || 'pcs' }}</span>
+            <div class="flex items-end gap-2 mb-6 md:mb-8 bg-gray-50/50 p-3 md:p-4 border border-gray-100 rounded-2xl w-max max-w-full">
+              <span class="text-2xl md:text-4xl font-extrabold text-emerald-600">{{ formatPrice(product.price) }}</span>
+              <span class="text-gray-500 mb-0.5 md:mb-1 font-medium text-sm">/ {{ product.unit || 'pcs' }}</span>
             </div>
 
             <!-- Description -->
-            <h3 class="font-bold text-gray-900 mb-3 text-lg">Deskripsi Produk</h3>
-            <div class="text-gray-600 leading-relaxed mb-8 text-sm sm:text-base whitespace-pre-wrap">
+            <h3 class="font-bold text-gray-900 mb-2 md:mb-3 text-base md:text-lg">Deskripsi Produk</h3>
+            <div class="text-gray-600 leading-relaxed mb-6 md:mb-8 text-sm sm:text-base whitespace-pre-wrap">
               {{ product.description || 'Tidak ada deskripsi yang tersedia untuk produk ini. Hubungi penjual untuk informasi lebih lanjut.' }}
             </div>
 
@@ -221,7 +221,7 @@ const buyLinksParsed = computed(() => {
                 <ShoppingBag class="w-5 h-5 text-emerald-600" /> Opsi Pemesanan Langsung
               </h3>
               <div class="flex flex-wrap gap-4">
-                <a :href="buyLinksParsed?.whatsapp || getWhatsAppLink(product.merchant, product)" target="_blank" @click="trackClick('wa')" class="flex-1 min-w-[140px] bg-[#25D366] hover:bg-[#20b858] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#25D366]/20">
+                <a :href="buyLinksParsed?.whatsapp || getWhatsAppLink(product.merchant, product)" target="_blank" @click="trackClick('wa')" class="flex-1 min-w-[120px] bg-[#25D366] hover:bg-[#20b858] text-white font-semibold py-3 md:py-3.5 px-3 md:px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#25D366]/20 text-sm md:text-base">
                   <img src="https://cdn.simpleicons.org/whatsapp/white" alt="WhatsApp" class="w-5 h-5" /> WhatsApp
                 </a>
                 
@@ -242,7 +242,7 @@ const buyLinksParsed = computed(() => {
         </div>
 
         <!-- Supporting Economy Banner -->
-        <div class="bg-emerald-700 rounded-3xl overflow-hidden flex flex-col md:flex-row items-stretch mb-20 shadow-xl relative">
+        <div class="bg-emerald-700 rounded-2xl md:rounded-3xl overflow-hidden flex flex-col md:flex-row items-stretch mb-12 md:mb-20 shadow-xl relative">
           <!-- Pattern Decal -->
           <Leaf class="absolute -bottom-10 -left-10 w-48 h-48 text-emerald-600 opacity-20 pointer-events-none" />
          
@@ -251,7 +251,7 @@ const buyLinksParsed = computed(() => {
             <div class="absolute inset-0 bg-gradient-to-r from-transparent to-emerald-700/90"></div>
           </div>
           
-          <div class="md:w-2/3 p-8 lg:p-12 text-white relative z-10">
+          <div class="md:w-2/3 p-5 md:p-8 lg:p-12 text-white relative z-10">
             <h2 class="text-2xl lg:text-3xl font-bold mb-3 flex items-center gap-2">
               <Store class="w-6 h-6 text-emerald-300" /> Profil Usaha: {{ product.merchant?.name || 'Toko Warga' }}
             </h2>
@@ -272,7 +272,7 @@ const buyLinksParsed = computed(() => {
         <!-- Related Products -->
         <div v-if="relatedProducts.length > 0">
           <div class="flex items-center justify-between mb-8 border-b border-gray-200 pb-4">
-               <h2 class="text-2xl font-bold text-gray-900">Produk Serupa Lainnya</h2>
+               <h2 class="text-xl md:text-2xl font-bold text-gray-900">Produk Serupa Lainnya</h2>
                <RouterLink to="/category" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Kategori</RouterLink>
           </div>
           
@@ -283,10 +283,10 @@ const buyLinksParsed = computed(() => {
               :to="`/product/${p.id}`"
               class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group"
             >
-              <div class="relative h-48 overflow-hidden bg-gray-100">
+              <div class="relative h-32 md:h-48 overflow-hidden bg-gray-100">
                 <img :src="getProductImage(p)" :alt="p.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
-              <div class="p-4">
+              <div class="p-3 md:p-4">
                 <p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">{{ p.merchant?.name || 'Toko' }}</p>
                 <h3 class="text-sm font-bold text-gray-900 mb-2 truncate">{{ p.name }}</h3>
                 <p class="text-emerald-600 font-extrabold">{{ formatPrice(p.price) }}</p>
