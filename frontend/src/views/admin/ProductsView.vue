@@ -339,7 +339,7 @@ const formatRupiah = (number: number) => {
     </div>
 
     <!-- MODE FORMULIR (FORM) -->
-    <div v-else class="space-y-6 max-w-5xl mx-auto">
+    <div v-else class="space-y-6 max-w-5xl mx-auto pb-24 md:pb-0">
       <!-- Form Header -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
