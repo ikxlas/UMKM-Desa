@@ -199,19 +199,19 @@ const getRandomSoldInfo = (id: number) => {
     
     <div v-else>
       <!-- Hero Section -->
-      <div class="px-6 md:px-12 pt-8">
-        <div class="relative w-full h-[400px] md:h-[450px] rounded-2xl overflow-hidden shadow-lg">
+      <div class="px-4 md:px-12 pt-4 md:pt-8">
+        <div class="relative w-full h-[250px] md:h-[450px] rounded-2xl overflow-hidden shadow-lg">
           <img :src="settings.hero_image" alt="Hero Banner" class="absolute inset-0 w-full h-full object-cover object-center" />
           <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
-          <div class="absolute inset-0 flex flex-col justify-center px-10 md:px-16 max-w-2xl">
-            <h1 class="text-4xl md:text-5xl font-bold text-white leading-tight mb-4">
+          <div class="absolute inset-0 flex flex-col justify-center px-6 md:px-16 max-w-2xl">
+            <h1 class="text-2xl md:text-5xl font-bold text-white leading-tight mb-3 md:mb-4">
               {{ settings.hero_headline }}
             </h1>
-            <p class="text-gray-200 text-base md:text-lg mb-8 leading-relaxed">
+            <p class="text-gray-200 text-sm md:text-lg mb-5 md:mb-8 leading-relaxed line-clamp-3 md:line-clamp-none">
               {{ settings.hero_subtitle }}
             </p>
             <div>
-              <RouterLink to="/category" class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 px-8 rounded-lg shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5">
+              <RouterLink to="/category" class="inline-block bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-2.5 md:py-3 px-6 md:px-8 rounded-lg shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 text-sm md:text-base">
                 Belanja Sekarang
               </RouterLink>
             </div>
@@ -220,7 +220,7 @@ const getRandomSoldInfo = (id: number) => {
       </div>
 
       <!-- Categories Section -->
-      <div v-if="categories.length > 0" class="px-6 md:px-12 mt-12">
+      <div v-if="categories.length" class="px-4 md:px-12 mt-8 md:mt-12">
         <div class="flex items-center justify-start gap-8 md:gap-16 overflow-x-auto pb-4 hide-scrollbar">
           <RouterLink to="/category" v-for="cat in categories" :key="cat.id" class="flex flex-col items-center gap-3 cursor-pointer group min-w-[80px]">
             <div class="w-16 h-16 rounded-full bg-white border border-gray-100 shadow-sm flex items-center justify-center text-emerald-600 group-hover:bg-emerald-50 group-hover:border-emerald-200 transition-colors overflow-hidden">
@@ -233,28 +233,28 @@ const getRandomSoldInfo = (id: number) => {
       </div>
 
       <!-- Produk Terlaris Section (Using Bestseller filter from DB) -->
-      <div v-if="bestsellerProducts.length > 0" class="px-6 md:px-12 mt-16">
-        <div class="flex items-end justify-between mb-8">
+      <div v-if="bestsellerProducts.length" class="px-4 md:px-12 mt-10 md:mt-16">
+        <div class="flex items-end justify-between mb-5 md:mb-8">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-1">Produk Terlaris</h2>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">Produk Terlaris</h2>
             <p class="text-gray-500 text-sm">Koleksi favorit pelanggan minggu ini</p>
           </div>
           <RouterLink to="/category" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
           <RouterLink :to="`/product/${p.id}`" v-for="(p, idx) in bestsellerProducts.slice(0, 5)" :key="p.id" class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
-            <div class="relative h-48 overflow-hidden bg-gray-100">
+            <div class="relative h-32 md:h-48 overflow-hidden bg-gray-100">
               <img :src="getProductImage(p)" :alt="p.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div v-if="p.stock > 0" class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-1 rounded">
+              <div v-if="p.stock" class="absolute top-2 left-2 md:top-3 md:left-3 bg-emerald-100 text-emerald-800 text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">
                 READY STOCK
               </div>
             </div>
-            <div class="p-4">
-              <h3 class="text-sm font-medium text-gray-900 mb-2 truncate">{{ p.name }}</h3>
-              <p class="text-emerald-600 font-bold text-lg mb-3">{{ formatPrice(p.price) }}</p>
+            <div class="p-3 md:p-4">
+              <h3 class="text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2 truncate">{{ p.name }}</h3>
+              <p class="text-emerald-600 font-bold text-sm md:text-lg mb-2 md:mb-3">{{ formatPrice(p.price) }}</p>
               
-              <div class="flex items-center gap-1 text-gray-500 text-xs mb-3">
+              <div class="hidden md:flex items-center gap-1 text-gray-500 text-xs mb-3">
                 <MapPin class="w-3.5 h-3.5" />
                 <span class="truncate">{{ p.merchant?.address || 'Purwoasri, Kediri' }}</span>
               </div>
@@ -266,25 +266,25 @@ const getRandomSoldInfo = (id: number) => {
       </div>
 
       <!-- Produk Rekomendasi Section -->
-      <div v-if="recommendedProducts.length > 0" class="px-6 md:px-12 mt-16">
-        <div class="flex items-end justify-between mb-8">
+      <div v-if="recommendedProducts.length" class="px-4 md:px-12 mt-10 md:mt-16">
+        <div class="flex items-end justify-between mb-5 md:mb-8">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-1">Rekomendasi Kami</h2>
-            <p class="text-gray-500 text-sm">Produk kurasi terbaik dari admin</p>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">Rekomendasi Kami</h2>
+            <p class="text-gray-500 text-xs md:text-sm">Produk kurasi terbaik dari admin</p>
           </div>
           <RouterLink to="/category" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
           <RouterLink :to="`/product/${p.id}`" v-for="(p, idx) in recommendedProducts.slice(0, 5)" :key="p.id" class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
-            <div class="relative h-48 overflow-hidden bg-gray-100">
+            <div class="relative h-32 md:h-48 overflow-hidden bg-gray-100">
               <img :src="getProductImage(p)" :alt="p.name" class="w-full h-full object-cover" />
             </div>
-            <div class="p-4">
-              <h3 class="text-sm font-medium text-gray-900 mb-2 truncate">{{ p.name }}</h3>
-              <p class="text-emerald-600 font-bold text-lg mb-3">{{ formatPrice(p.price) }}</p>
+            <div class="p-3 md:p-4">
+              <h3 class="text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2 truncate">{{ p.name }}</h3>
+              <p class="text-emerald-600 font-bold text-sm md:text-lg mb-2 md:mb-3">{{ formatPrice(p.price) }}</p>
               
-              <div class="flex items-center gap-1 text-gray-500 text-xs mb-3">
+              <div class="hidden md:flex items-center gap-1 text-gray-500 text-xs mb-3">
                 <MapPin class="w-3.5 h-3.5" />
                 <span class="truncate">{{ p.merchant?.address || 'Purwoasri, Kediri' }}</span>
               </div>
@@ -296,25 +296,25 @@ const getRandomSoldInfo = (id: number) => {
       </div>
 
       <!-- Produk Sedang Trending Section -->
-      <div v-if="trendingProducts.length > 0" class="px-6 md:px-12 mt-16">
-        <div class="flex items-end justify-between mb-8">
+      <div v-if="trendingProducts.length" class="px-4 md:px-12 mt-10 md:mt-16">
+        <div class="flex items-end justify-between mb-5 md:mb-8">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-1">Banyak Dicari</h2>
-            <p class="text-gray-500 text-sm">Produk yang sedang trending saat ini</p>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-1">Banyak Dicari</h2>
+            <p class="text-gray-500 text-xs md:text-sm">Produk yang sedang trending saat ini</p>
           </div>
           <RouterLink to="/category" class="text-emerald-600 font-semibold text-sm hover:text-emerald-700">Lihat Semua</RouterLink>
         </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
           <RouterLink :to="`/product/${p.id}`" v-for="(p, idx) in trendingProducts.slice(0, 5)" :key="p.id" class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
-            <div class="relative h-48 overflow-hidden bg-gray-100">
+            <div class="relative h-32 md:h-48 overflow-hidden bg-gray-100">
               <img :src="getProductImage(p)" :alt="p.name" class="w-full h-full object-cover" />
             </div>
-            <div class="p-4">
-              <h3 class="text-sm font-medium text-gray-900 mb-2 truncate">{{ p.name }}</h3>
-              <p class="text-emerald-600 font-bold text-lg mb-3">{{ formatPrice(p.price) }}</p>
+            <div class="p-3 md:p-4">
+              <h3 class="text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2 truncate">{{ p.name }}</h3>
+              <p class="text-emerald-600 font-bold text-sm md:text-lg mb-2 md:mb-3">{{ formatPrice(p.price) }}</p>
               
-              <div class="flex items-center gap-1 text-gray-500 text-xs mb-3">
+              <div class="hidden md:flex items-center gap-1 text-gray-500 text-xs mb-3">
                 <MapPin class="w-3.5 h-3.5" />
                 <span class="truncate">{{ p.merchant?.address || 'Purwoasri, Kediri' }}</span>
               </div>
@@ -326,43 +326,42 @@ const getRandomSoldInfo = (id: number) => {
       </div>
 
       <!-- Merchant Pilihan Section -->
-      <div v-if="merchants.length > 0" class="px-6 md:px-12 mt-20">
-        <div class="flex items-center gap-2 mb-8">
-          <CheckCircle2 class="w-6 h-6 text-emerald-600" />
-          <h2 class="text-2xl font-bold text-gray-900">Merchant Pilihan</h2>
+      <div v-if="merchants.length" class="px-4 md:px-12 mt-12 md:mt-20">
+        <div class="flex items-center gap-2 mb-5 md:mb-8">
+          <CheckCircle2 class="w-5 md:w-6 h-5 md:h-6 text-emerald-600" />
+          <h2 class="text-xl md:text-2xl font-bold text-gray-900">Merchant Pilihan</h2>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <!-- Main Merchant Card (Index 0) -->
-          <div v-if="merchants[0]" class="lg:col-span-2 relative rounded-2xl overflow-hidden h-[300px] shadow-lg group cursor-pointer">
+          <div v-if="merchants[0]" class="lg:col-span-2 relative rounded-2xl overflow-hidden h-[200px] md:h-[300px] shadow-lg group cursor-pointer">
             <img :src="getMerchantImage(merchants[0])" :alt="merchants[0].name" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
             
-            <div class="absolute bottom-0 left-0 p-8 w-full">
-              <div class="bg-emerald-500/90 backdrop-blur text-white text-[10px] font-bold px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 mb-3 uppercase tracking-wider">
+            <div class="absolute bottom-0 left-0 p-5 md:p-8 w-full">
+              <div class="bg-emerald-500/90 backdrop-blur text-white text-[9px] md:text-[10px] font-bold px-2.5 md:px-3 py-1 md:py-1.5 rounded-full inline-flex items-center gap-1.5 mb-2 md:mb-3 uppercase tracking-wider">
                 <Star class="w-3 h-3 fill-white" /> Local Merchant Terbaik
               </div>
-              <h3 class="text-3xl font-bold text-white mb-2">{{ merchants[0].name }}</h3>
-              <p class="text-gray-200 text-sm max-w-md mb-6 leading-relaxed line-clamp-2">{{ merchants[0].description || 'Spesialis produk desa dengan kualitas ekspor.' }}</p>
-              <button class="bg-white text-gray-900 font-semibold px-6 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+              <h3 class="text-xl md:text-3xl font-bold text-white mb-1.5 md:mb-2">{{ merchants[0].name }}</h3>
+              <p class="text-gray-200 text-xs md:text-sm max-w-md mb-4 md:mb-6 leading-relaxed line-clamp-2">{{ merchants[0].description || 'Spesialis produk desa dengan kualitas ekspor.' }}</p>
+              <button class="bg-white text-gray-900 font-semibold px-4 md:px-6 py-2 md:py-2.5 rounded-lg text-xs md:text-sm hover:bg-gray-50 transition-colors">
                 Lihat Toko
               </button>
             </div>
           </div>
 
           <!-- Smaller Merchant Cards (Index 1 & 2) -->
-          <div class="flex flex-col gap-6">
-            <div v-for="(m, idx) in merchants.slice(1, 3)" :key="m.id" class="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer relative overflow-hidden group">
-              <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-4 group-hover:bg-emerald-100 transition-colors">
-                <img v-if="m.logo || m.image" :src="m.logo || m.image" class="w-8 h-8 rounded-full object-cover" />
-                <Store v-else class="w-6 h-6" />
+          <div class="flex flex-col gap-4 md:gap-6">
+            <div v-for="(m, idx) in merchants.slice(1, 3)" :key="m.id" class="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer relative overflow-hidden group">
+              <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-3 md:mb-4 group-hover:bg-emerald-100 transition-colors">
+                <img v-if="m.logo || m.image" :src="m.logo || m.image" class="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover" />
+                <Store v-else class="w-5 h-5 md:w-6 md:h-6" />
               </div>
-              <h4 class="text-lg font-bold text-gray-900 mb-2">{{ m.name }}</h4>
-              <p class="text-gray-500 text-sm mb-6 leading-relaxed line-clamp-2">{{ m.description || 'Pilar utama produk lokal berkualitas.' }}</p>
+              <h4 class="text-base md:text-lg font-bold text-gray-900 mb-1.5 md:mb-2">{{ m.name }}</h4>
+              <p class="text-gray-500 text-xs md:text-sm mb-4 md:mb-6 leading-relaxed line-clamp-2">{{ m.description || 'Pilar utama produk lokal berkualitas.' }}</p>
               <div class="flex items-center gap-2 text-emerald-600 font-semibold text-sm border-t border-gray-50 pt-2">
                 Kunjungi Merchant <ArrowRight class="w-4 h-4" />
               </div>
-              <!-- Decorative Background Icon -->
               <LayoutGrid class="absolute -bottom-4 -right-4 w-32 h-32 text-gray-50 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none" />
             </div>
           </div>
@@ -370,16 +369,16 @@ const getRandomSoldInfo = (id: number) => {
       </div>
 
       <!-- Features Section -->
-      <div class="px-6 md:px-12 mt-20">
-        <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-            <div v-for="(feat, i) in features" :key="i" class="flex gap-4 items-start pt-6 md:pt-0 first:pt-0 md:px-6 first:px-0">
-              <div class="w-12 h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0">
-                <component :is="feat.icon" class="w-6 h-6" />
+      <div class="px-4 md:px-12 mt-12 md:mt-20">
+        <div class="bg-white border border-gray-100 rounded-2xl p-5 md:p-8 shadow-sm">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+            <div v-for="(feat, i) in features" :key="i" class="flex gap-3 md:gap-4 items-start pt-4 md:pt-0 first:pt-0 md:px-6 first:px-0">
+              <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500 flex items-center justify-center text-white shrink-0">
+                <component :is="feat.icon" class="w-5 h-5 md:w-6 md:h-6" />
               </div>
               <div>
-                <h4 class="font-bold text-gray-900 mb-1">{{ feat.title }}</h4>
-                <p class="text-sm text-gray-500 leading-relaxed">{{ feat.desc }}</p>
+                <h4 class="font-bold text-gray-900 mb-1 text-sm md:text-base">{{ feat.title }}</h4>
+                <p class="text-xs md:text-sm text-gray-500 leading-relaxed">{{ feat.desc }}</p>
               </div>
             </div>
           </div>
