@@ -221,19 +221,19 @@ const buyLinksParsed = computed(() => {
                 <ShoppingBag class="w-5 h-5 text-emerald-600" /> Opsi Pemesanan Langsung
               </h3>
               <div class="flex flex-wrap gap-4">
-                <a :href="buyLinksParsed?.whatsapp || getWhatsAppLink(product.merchant, product)" target="_blank" @click="trackClick('wa')" class="flex-1 min-w-[120px] bg-[#25D366] hover:bg-[#20b858] text-white font-semibold py-3 md:py-3.5 px-3 md:px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#25D366]/20 text-sm md:text-base">
+                <a v-if="(buyLinksParsed?.whatsapp && buyLinksParsed.whatsapp.trim()) || product.merchant?.phone" :href="buyLinksParsed?.whatsapp || getWhatsAppLink(product.merchant, product)" target="_blank" @click="trackClick('wa')" class="flex-1 min-w-[120px] bg-[#25D366] hover:bg-[#20b858] text-white font-semibold py-3 md:py-3.5 px-3 md:px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#25D366]/20 text-sm md:text-base">
                   <img src="https://cdn.simpleicons.org/whatsapp/white" alt="WhatsApp" class="w-5 h-5" /> WhatsApp
                 </a>
                 
-                <a v-if="buyLinksParsed?.grabfood" :href="buyLinksParsed.grabfood" target="_blank" @click="trackClick('grab')" class="flex-1 min-w-[140px] bg-[#00B14F] hover:bg-[#009643] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#00B14F]/20">
+                <a v-if="buyLinksParsed?.grabfood && buyLinksParsed.grabfood.trim()" :href="buyLinksParsed.grabfood" target="_blank" @click="trackClick('grab')" class="flex-1 min-w-[140px] bg-[#00B14F] hover:bg-[#009643] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#00B14F]/20">
                   <img src="https://cdn.simpleicons.org/grab/white" alt="GrabFood" class="w-5 h-5" /> GrabFood
                 </a>
                 
-                <a v-if="buyLinksParsed?.gofood" :href="buyLinksParsed.gofood" target="_blank" @click="trackClick('go')" class="flex-1 min-w-[140px] bg-[#EE2737] hover:bg-[#d62130] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#EE2737]/20">
+                <a v-if="buyLinksParsed?.gofood && buyLinksParsed.gofood.trim()" :href="buyLinksParsed.gofood" target="_blank" @click="trackClick('go')" class="flex-1 min-w-[140px] bg-[#EE2737] hover:bg-[#d62130] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#EE2737]/20">
                   <img src="https://cdn.simpleicons.org/gojek/white" alt="GoFood" class="w-5 h-5" /> GoFood
                 </a>
 
-                <a v-if="buyLinksParsed?.shopee" :href="buyLinksParsed.shopee" target="_blank" @click="trackClick('shopee')" class="flex-1 min-w-[140px] bg-[#EE4D2D] hover:bg-[#d64326] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#EE4D2D]/20">
+                <a v-if="buyLinksParsed?.shopee && buyLinksParsed.shopee.trim()" :href="buyLinksParsed.shopee" target="_blank" @click="trackClick('shopee')" class="flex-1 min-w-[140px] bg-[#EE4D2D] hover:bg-[#d64326] text-white font-semibold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm shadow-[#EE4D2D]/20">
                   <img src="https://cdn.simpleicons.org/shopee/white" alt="Shopee" class="w-5 h-5" /> Shopee
                 </a>
               </div>
