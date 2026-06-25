@@ -55,6 +55,18 @@ import { onMounted } from 'vue'
 const categories = ref<any[]>([])
 const isLoading = ref(false)
 
+// State Pencarian
+const searchQuery = ref('')
+import { computed } from 'vue'
+
+const filteredCategories = computed(() => {
+  if (!searchQuery.value) return categories.value
+  const q = searchQuery.value.toLowerCase()
+  return categories.value.filter(c => 
+    c.name.toLowerCase().includes(q)
+  )
+})
+
 // Pilihan Ikon untuk Form
 const availableIcons = [
   { name: 'Store', component: Store },
@@ -233,6 +245,7 @@ const deleteCategory = async (id: number) => {
         <Search class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
         <input 
           type="text" 
+          v-model="searchQuery"
           placeholder="Cari nama kategori..." 
           class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm bg-gray-50 focus:bg-white transition-colors"
         />
@@ -244,12 +257,12 @@ const deleteCategory = async (id: number) => {
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
     </div>
     
-    <div v-else-if="categories.length === 0" class="text-center py-12 bg-white rounded-2xl border border-gray-100">
-      <p class="text-gray-500">Belum ada kategori. Silakan tambah kategori baru.</p>
+    <div v-else-if="filteredCategories.length === 0" class="text-center py-12 bg-white rounded-2xl border border-gray-100">
+      <p class="text-gray-500">Kategori tidak ditemukan. Coba kata kunci lain atau tambah kategori baru.</p>
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="cat in categories" :key="cat.id" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex items-start justify-between">
+      <div v-for="cat in filteredCategories" :key="cat.id" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex items-start justify-between">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors overflow-hidden shrink-0">
             <component v-if="!cat.isCustom" :is="cat.icon" class="w-7 h-7" />
