@@ -126,9 +126,9 @@ const removeProduct = (settingKey: string, id: number) => {
       <!-- KARTU 1: TRENDING -->
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <!-- Header Kartu -->
-        <div class="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white p-6 flex items-center justify-between">
+        <div class="border-b border-gray-100 bg-gradient-to-r from-blue-50 to-white p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="bg-blue-100 p-2 rounded-lg text-blue-600">
+            <div class="bg-blue-100 p-2 rounded-lg text-blue-600 shrink-0">
               <TrendingUp class="w-5 h-5" />
             </div>
             <div>
@@ -136,14 +136,14 @@ const removeProduct = (settingKey: string, id: number) => {
               <p class="text-xs text-gray-500">Produk yang sedang naik daun atau banyak dicari minggu ini.</p>
             </div>
           </div>
-          <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+          <span class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100 whitespace-nowrap shrink-0 self-start sm:self-auto">
             {{ trendingProducts.length }} Produk
           </span>
         </div>
         
         <!-- Body Kartu -->
-        <div class="p-6 space-y-6">
-          <div class="flex gap-2">
+        <div class="p-4 sm:p-6 space-y-6">
+          <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
               <select v-model="newTrendingId" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-shadow bg-white">
                 <option value="">Pilih Produk dari Database...</option>
@@ -182,9 +182,9 @@ const removeProduct = (settingKey: string, id: number) => {
       <!-- KARTU 2: TERLARIS -->
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <!-- Header Kartu -->
-        <div class="border-b border-gray-100 bg-gradient-to-r from-amber-50 to-white p-6 flex items-center justify-between">
+        <div class="border-b border-gray-100 bg-gradient-to-r from-amber-50 to-white p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="bg-amber-100 p-2 rounded-lg text-amber-600">
+            <div class="bg-amber-100 p-2 rounded-lg text-amber-600 shrink-0">
               <Crown class="w-5 h-5" />
             </div>
             <div>
@@ -192,14 +192,14 @@ const removeProduct = (settingKey: string, id: number) => {
               <p class="text-xs text-gray-500">Produk jagoan dengan penjualan tertinggi sepanjang masa.</p>
             </div>
           </div>
-          <span class="text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-100">
+          <span class="text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100 whitespace-nowrap shrink-0 self-start sm:self-auto">
             {{ bestSellerProducts.length }} Produk
           </span>
         </div>
         
         <!-- Body Kartu -->
-        <div class="p-6 space-y-6">
-          <div class="flex gap-2">
+        <div class="p-4 sm:p-6 space-y-6">
+          <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
               <select v-model="newBestsellerId" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-white">
                 <option value="">Pilih Produk dari Database...</option>
@@ -238,9 +238,9 @@ const removeProduct = (settingKey: string, id: number) => {
       <!-- KARTU 3: REKOMENDASI ADMIN -->
       <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <!-- Header Kartu -->
-        <div class="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white p-6 flex items-center justify-between">
+        <div class="border-b border-gray-100 bg-gradient-to-r from-emerald-50 to-white p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="flex items-center gap-3">
-            <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600">
+            <div class="bg-emerald-100 p-2 rounded-lg text-emerald-600 shrink-0">
               <Star class="w-5 h-5 fill-emerald-600" />
             </div>
             <div>
@@ -248,14 +248,14 @@ const removeProduct = (settingKey: string, id: number) => {
               <p class="text-xs text-gray-500">Produk pilihan khusus yang ingin Anda promosikan minggu ini.</p>
             </div>
           </div>
-          <span class="text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+          <span class="text-sm font-medium text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100 whitespace-nowrap shrink-0 self-start sm:self-auto">
             {{ recommendedProducts.length }} Produk
           </span>
         </div>
         
         <!-- Body Kartu -->
-        <div class="p-6 space-y-6">
-          <div class="flex gap-2">
+        <div class="p-4 sm:p-6 space-y-6">
+          <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
               <select v-model="newRecommendedId" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-shadow bg-white">
                 <option value="">Pilih Produk dari Database...</option>
