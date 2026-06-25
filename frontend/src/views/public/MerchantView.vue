@@ -46,6 +46,17 @@ const fetchMerchantData = async () => {
   }
 }
 
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+
+const totalPages = computed(() => Math.ceil(merchantProducts.value.length / itemsPerPage.value))
+
+const paginatedProducts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return merchantProducts.value.slice(start, end)
+})
+
 onMounted(() => {
   fetchMerchantData()
 })
@@ -142,7 +153,7 @@ const socialMedia = computed(() => {
                     </div>
                   </div>
                   <div class="w-full md:w-auto shrink-0 mt-2 md:mt-0">
-                    <a :href="getWhatsAppLink(merchant)" target="_blank" class="w-full md:w-auto bg-[#25D366] hover:bg-[#20b858] text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-default shadow-sm border border-[#20b858]">
+                    <a v-if="merchant.phone && merchant.phone.trim()" :href="getWhatsAppLink(merchant)" target="_blank" class="w-full md:w-auto bg-[#25D366] hover:bg-[#20b858] text-white font-bold py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 transition-default shadow-sm border border-[#20b858]">
                       <img src="https://cdn.simpleicons.org/whatsapp/white" class="w-5 h-5" /> Hubungi Toko
                     </a>
                   </div>
@@ -183,12 +194,12 @@ const socialMedia = computed(() => {
                   </div>
                   
                   <!-- Social Media Section -->
-                  <div v-if="socialMedia.instagram || socialMedia.facebook || socialMedia.tiktok" class="pt-6 border-t border-gray-100">
+                  <div v-if="(socialMedia.instagram && socialMedia.instagram.trim()) || (socialMedia.facebook && socialMedia.facebook.trim()) || (socialMedia.tiktok && socialMedia.tiktok.trim())" class="pt-6 border-t border-gray-100">
                     <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4">Terhubung Bersama Kami</p>
                     
                     <div class="flex flex-col gap-3">
                       <!-- Instagram -->
-                      <a v-if="socialMedia.instagram" :href="socialMedia.instagram" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-pink-500 hover:shadow-md transition-all duration-300 group">
+                      <a v-if="socialMedia.instagram && socialMedia.instagram.trim()" :href="socialMedia.instagram" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-pink-500 hover:shadow-md transition-all duration-300 group">
                         <div class="w-9 h-9 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0 group-hover:border-pink-200 transition-colors">
                           <Instagram class="w-4 h-4 text-pink-500" />
                         </div>
@@ -196,7 +207,7 @@ const socialMedia = computed(() => {
                       </a>
                       
                       <!-- Facebook -->
-                      <a v-if="socialMedia.facebook" :href="socialMedia.facebook" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-blue-500 hover:shadow-md transition-all duration-300 group">
+                      <a v-if="socialMedia.facebook && socialMedia.facebook.trim()" :href="socialMedia.facebook" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-blue-500 hover:shadow-md transition-all duration-300 group">
                         <div class="w-9 h-9 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0 group-hover:border-blue-200 transition-colors">
                           <Facebook class="w-4 h-4 text-blue-600" />
                         </div>
@@ -204,7 +215,7 @@ const socialMedia = computed(() => {
                       </a>
                       
                       <!-- TikTok -->
-                      <a v-if="socialMedia.tiktok" :href="socialMedia.tiktok" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-gray-900 hover:shadow-md transition-all duration-300 group">
+                      <a v-if="socialMedia.tiktok && socialMedia.tiktok.trim()" :href="socialMedia.tiktok" target="_blank" class="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50/50 hover:bg-white hover:border-gray-900 hover:shadow-md transition-all duration-300 group">
                         <div class="w-9 h-9 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center shrink-0 group-hover:border-gray-300 transition-colors">
                           <img src="https://cdn.simpleicons.org/tiktok/currentColor" class="w-4 h-4 text-gray-800 group-hover:text-black" />
                         </div>
@@ -235,7 +246,7 @@ const socialMedia = computed(() => {
         
         <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
           <RouterLink 
-            v-for="product in merchantProducts" 
+            v-for="product in paginatedProducts" 
             :key="product.id" 
             :to="`/product/${product.id}`"
             class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group flex flex-col"
@@ -254,6 +265,15 @@ const socialMedia = computed(() => {
               <p class="text-emerald-600 font-bold text-sm md:text-lg mb-1 mt-auto">{{ formatPrice(product.price) }}</p>
             </div>
           </RouterLink>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div v-if="totalPages > 1" class="mt-8 flex justify-center items-center gap-1 sm:gap-2">
+          <button @click="currentPage--" :disabled="currentPage === 1" class="px-2 sm:px-3 py-1.5 rounded-lg border border-gray-200 text-xs sm:text-sm font-medium transition-colors" :class="currentPage === 1 ? 'opacity-50 cursor-not-allowed text-gray-400' : 'text-gray-600 hover:bg-gray-50'">Prev</button>
+          <div class="flex items-center gap-1">
+            <button v-for="p in totalPages" :key="p" @click="currentPage = p" class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-lg text-xs sm:text-sm font-bold transition-colors" :class="currentPage === p ? 'bg-emerald-600 text-white' : 'text-gray-600 hover:bg-gray-50 border border-transparent hover:border-gray-200'">{{ p }}</button>
+          </div>
+          <button @click="currentPage++" :disabled="currentPage === totalPages" class="px-2 sm:px-3 py-1.5 rounded-lg border border-gray-200 text-xs sm:text-sm font-medium transition-colors" :class="currentPage === totalPages ? 'opacity-50 cursor-not-allowed text-gray-400' : 'text-gray-600 hover:bg-gray-50'">Next</button>
         </div>
 
       </div>
