@@ -183,8 +183,8 @@ const saveProfile = async () => {
     </div>
 
     <!-- Tombol Simpan (Fixed / Floating di tengah) -->
-    <div class="flex justify-start lg:justify-end pt-4">
-      <button @click="saveProfile" :disabled="isSaving" class="bg-gray-900 hover:bg-emerald-600 text-white font-semibold py-4 px-10 rounded-2xl flex items-center justify-center min-w-[240px] gap-3 transition-all duration-300 disabled:opacity-70 shadow-lg hover:shadow-emerald-500/30 overflow-hidden relative group">
+    <div class="flex pt-4">
+      <button @click="saveProfile" :disabled="isSaving" class="bg-gray-900 w-full lg:w-auto lg:ml-auto hover:bg-emerald-600 text-white font-semibold py-4 px-10 rounded-2xl flex items-center justify-center min-w-[240px] gap-3 transition-all duration-300 disabled:opacity-70 shadow-lg hover:shadow-emerald-500/30 overflow-hidden relative group">
         <span class="absolute inset-0 w-full h-full opacity-0 group-hover:opacity-30 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none transition-opacity"></span>
         <Save class="w-5 h-5 flex-shrink-0 relative z-10" :class="{'animate-spin text-gray-400': isSaving}" /> 
         <span class="relative z-10">{{ isSaving ? 'Merekam ke Server...' : 'Simpan Semua Perubahan' }}</span>
