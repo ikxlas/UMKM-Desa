@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { 
   Plus, 
   Search, 
@@ -15,8 +15,6 @@ import {
   Facebook
 } from 'lucide-vue-next'
 
-import { onMounted } from 'vue'
-
 // State untuk mengontrol mode tampilan (List atau Form)
 const isFormMode = ref(false)
 const editingMerchantId = ref<number | null>(null)
@@ -27,7 +25,6 @@ const merchants = ref<any[]>([])
 
 // State Pencarian
 const searchQuery = ref('')
-import { computed } from 'vue'
 
 const filteredMerchants = computed(() => {
   if (!searchQuery.value) return merchants.value
@@ -36,6 +33,21 @@ const filteredMerchants = computed(() => {
     m.name.toLowerCase().includes(q) || 
     (m.owner_name && m.owner_name.toLowerCase().includes(q))
   )
+})
+
+// === PAGINATION ===
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+const totalPages = computed(() => Math.ceil(filteredMerchants.value.length / itemsPerPage.value))
+
+const paginatedMerchants = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return filteredMerchants.value.slice(start, end)
+})
+
+watch(searchQuery, () => {
+  currentPage.value = 1
 })
 
 const logoFile = ref<File | null>(null)
@@ -53,7 +65,7 @@ const formData = ref({
   instagram: '',
   facebook: '',
   tiktok: '',
-  logo: '/images/merchant.png',
+  logo: '',
   storefront_image: ''
 })
 
@@ -85,7 +97,7 @@ const openAddForm = () => {
     instagram: '',
     facebook: '',
     tiktok: '',
-    logo: '/images/merchant.png', 
+    logo: '', 
     storefront_image: ''
   }
   isFormMode.value = true
@@ -154,9 +166,9 @@ const saveMerchant = async () => {
   payload.append('address', formData.value.address)
   payload.append('phone', formData.value.phone)
   payload.append('social_media', JSON.stringify({
-    instagram: formData.value.instagram,
-    facebook: formData.value.facebook,
-    tiktok: formData.value.tiktok
+    instagram: formData.value.instagram?.trim() || '',
+    facebook: formData.value.facebook?.trim() || '',
+    tiktok: formData.value.tiktok?.trim() || ''
   }))
 
   if (logoFile.value) {
@@ -263,7 +275,7 @@ const deleteMerchant = async (id: number) => {
               <tr v-else-if="filteredMerchants.length === 0">
                 <td colspan="4" class="text-center py-8 text-gray-500">Merchant tidak ditemukan.</td>
               </tr>
-              <tr v-else v-for="merchant in filteredMerchants" :key="merchant.id" class="hover:bg-gray-50/50 transition-colors">
+              <tr v-else v-for="merchant in paginatedMerchants" :key="merchant.id" class="hover:bg-gray-50/50 transition-colors">
                 <td class="py-4 px-6 flex items-center gap-4">
                   <img :src="merchant.logo || '/images/merchant.png'" alt="Logo" class="w-10 h-10 rounded-full object-cover border border-gray-200" />
                   <span class="font-bold text-gray-900">{{ merchant.name }}</span>
@@ -290,6 +302,36 @@ const deleteMerchant = async (id: number) => {
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination Controls -->
+        <div v-if="totalPages > 1" class="flex items-center justify-between bg-white px-4 py-3 border-t border-gray-100 sm:px-6">
+          <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Menampilkan <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span> - <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredMerchants.length) }}</span> dari <span class="font-medium">{{ filteredMerchants.length }}</span> data
+              </p>
+            </div>
+            <div>
+              <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                <button @click="currentPage--" :disabled="currentPage === 1" class="relative inline-flex items-center rounded-l-md px-3 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 font-bold">
+                  &lt;
+                </button>
+                <button v-for="page in totalPages" :key="page" @click="currentPage = page" :class="[currentPage === page ? 'relative z-10 inline-flex items-center bg-emerald-600 px-4 py-2 text-sm font-semibold text-white focus:z-20' : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20']">
+                  {{ page }}
+                </button>
+                <button @click="currentPage++" :disabled="currentPage === totalPages" class="relative inline-flex items-center rounded-r-md px-3 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 font-bold">
+                  &gt;
+                </button>
+              </nav>
+            </div>
+          </div>
+          <div class="flex flex-1 justify-between sm:hidden items-center">
+            <button @click="currentPage--" :disabled="currentPage === 1" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Prev</button>
+            <span class="text-sm font-medium text-gray-700">{{ currentPage }} / {{ totalPages }}</span>
+            <button @click="currentPage++" :disabled="currentPage === totalPages" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Next</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
