@@ -39,18 +39,18 @@ const toggleFaq = (index: number) => {
 
 <template>
   <main class="min-h-screen bg-gray-50 pb-20 pt-6">
-    <div class="max-w-4xl mx-auto px-6 md:px-12">
+    <div class="max-w-4xl mx-auto px-4 md:px-12">
       <!-- Breadcrumbs -->
-      <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8">
+      <nav class="flex items-center gap-2 text-xs md:text-sm text-gray-500 mb-5 md:mb-8">
         <RouterLink to="/" class="hover:text-emerald-600 transition-colors">Home</RouterLink>
         <ChevronRight class="w-4 h-4" />
         <span class="text-emerald-700 font-medium">Pusat Bantuan</span>
       </nav>
 
       <!-- Header Search -->
-      <div class="bg-emerald-600 rounded-3xl p-8 md:p-12 text-center shadow-lg mb-12">
-        <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Ada yang bisa kami bantu?</h1>
-        <p class="text-emerald-100 mb-8 max-w-xl mx-auto">Cari solusi, panduan belanja, dan jawaban atas pertanyaan umum seputar UMKM Desa Purwoasri.</p>
+      <div class="bg-emerald-600 rounded-2xl md:rounded-3xl p-5 md:p-12 text-center shadow-lg mb-8 md:mb-12">
+        <h1 class="text-2xl md:text-4xl font-bold text-white mb-3 md:mb-4">Ada yang bisa kami bantu?</h1>
+        <p class="text-emerald-100 mb-5 md:mb-8 max-w-xl mx-auto text-sm md:text-base">Cari solusi, panduan belanja, dan jawaban atas pertanyaan umum seputar UMKM Desa Purwoasri.</p>
         
         <div class="relative max-w-2xl mx-auto">
           <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -65,42 +65,42 @@ const toggleFaq = (index: number) => {
       </div>
 
       <!-- Quick Topics -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-        <div class="bg-white p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer text-center group">
-          <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mx-auto mb-4 group-hover:bg-emerald-100 transition-colors">
-            <Package class="w-6 h-6" />
+      <div class="grid grid-cols-3 md:grid-cols-3 gap-3 md:gap-6 mb-10 md:mb-16">
+        <div class="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer text-center group">
+          <div class="w-10 h-10 md:w-14 md:h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mx-auto mb-2 md:mb-4 group-hover:bg-emerald-100 transition-colors">
+            <Package class="w-5 h-5 md:w-6 md:h-6" />
           </div>
-          <h3 class="font-bold text-gray-900 mb-2">Panduan Belanja</h3>
-          <p class="text-sm text-gray-500">Cara mudah memesan produk.</p>
+          <h3 class="font-bold text-gray-900 mb-1 md:mb-2 text-xs md:text-base">Panduan Belanja</h3>
+          <p class="text-xs md:text-sm text-gray-500 hidden md:block">Cara mudah memesan produk.</p>
         </div>
-        <div class="bg-white p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer text-center group">
-          <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mx-auto mb-4 group-hover:bg-emerald-100 transition-colors">
-            <CreditCard class="w-6 h-6" />
+        <div class="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer text-center group">
+          <div class="w-10 h-10 md:w-14 md:h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mx-auto mb-2 md:mb-4 group-hover:bg-emerald-100 transition-colors">
+            <CreditCard class="w-5 h-5 md:w-6 md:h-6" />
           </div>
-          <h3 class="font-bold text-gray-900 mb-2">Pembayaran</h3>
-          <p class="text-sm text-gray-500">Informasi metode bayar.</p>
+          <h3 class="font-bold text-gray-900 mb-1 md:mb-2 text-xs md:text-base">Pembayaran</h3>
+          <p class="text-xs md:text-sm text-gray-500 hidden md:block">Informasi metode bayar.</p>
         </div>
-        <div class="bg-white p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer text-center group">
-          <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mx-auto mb-4 group-hover:bg-emerald-100 transition-colors">
-            <Truck class="w-6 h-6" />
+        <div class="bg-white p-4 md:p-6 rounded-2xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer text-center group">
+          <div class="w-10 h-10 md:w-14 md:h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 mx-auto mb-2 md:mb-4 group-hover:bg-emerald-100 transition-colors">
+            <Truck class="w-5 h-5 md:w-6 md:h-6" />
           </div>
-          <h3 class="font-bold text-gray-900 mb-2">Pengiriman</h3>
-          <p class="text-sm text-gray-500">Lacak dan cek estimasi tiba.</p>
+          <h3 class="font-bold text-gray-900 mb-1 md:mb-2 text-xs md:text-base">Pengiriman</h3>
+          <p class="text-xs md:text-sm text-gray-500 hidden md:block">Lacak dan cek estimasi tiba.</p>
         </div>
       </div>
 
       <!-- FAQ Accordion -->
-      <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-        <div class="p-8 border-b border-gray-100">
-          <h2 class="text-2xl font-bold text-gray-900">Pertanyaan Umum (FAQ)</h2>
+      <div class="bg-white rounded-2xl md:rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-5 md:p-8 border-b border-gray-100">
+          <h2 class="text-xl md:text-2xl font-bold text-gray-900">Pertanyaan Umum (FAQ)</h2>
         </div>
         <div class="divide-y divide-gray-100">
-          <div v-for="(faq, index) in faqs" :key="index" class="p-6 md:px-8">
+          <div v-for="(faq, index) in faqs" :key="index" class="p-4 md:p-6 md:px-8">
             <button 
               @click="toggleFaq(index)" 
               class="w-full flex justify-between items-center text-left focus:outline-none"
             >
-              <h3 class="font-bold text-gray-900 pr-8" :class="{'text-emerald-600': faq.isOpen}">{{ faq.question }}</h3>
+              <h3 class="font-bold text-gray-900 pr-6 md:pr-8 text-sm md:text-base" :class="{'text-emerald-600': faq.isOpen}">{{ faq.question }}</h3>
               <ChevronDown 
                 class="w-5 h-5 text-gray-400 shrink-0 transition-transform duration-300" 
                 :class="{'rotate-180 text-emerald-600': faq.isOpen}"
@@ -108,7 +108,7 @@ const toggleFaq = (index: number) => {
             </button>
             <div 
               v-show="faq.isOpen" 
-              class="mt-4 text-gray-600 text-sm leading-relaxed pr-8"
+              class="mt-3 md:mt-4 text-gray-600 text-xs md:text-sm leading-relaxed pr-6 md:pr-8"
             >
               {{ faq.answer }}
             </div>
