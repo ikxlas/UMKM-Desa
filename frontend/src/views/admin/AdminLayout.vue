@@ -20,7 +20,7 @@ import {
 } from 'lucide-vue-next'
 
 const route = useRoute()
-const isSidebarOpen = ref(true)
+const isSidebarOpen = ref(false) // Ditutup secara default untuk layar HP
 const backendStatus = ref('Menghubungkan...')
 const isConnected = ref(false)
 
@@ -141,17 +141,6 @@ const handleLogout = async () => {
         </div>
 
         <div class="flex items-center gap-5">
-          <!-- Indikator Koneksi Backend -->
-          <div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium" 
-               :class="isConnected ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'">
-            <div class="w-2 h-2 rounded-full animate-pulse" :class="isConnected ? 'bg-emerald-500' : 'bg-red-500'"></div>
-            {{ backendStatus }}
-          </div>
-
-          <button class="text-gray-500 hover:text-emerald-600 relative">
-            <Bell class="w-5 h-5" />
-            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-          </button>
           <div class="h-8 w-8 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center text-emerald-700 font-bold text-sm">
             A
           </div>
