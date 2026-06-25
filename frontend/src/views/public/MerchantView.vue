@@ -95,7 +95,7 @@ const socialMedia = computed(() => {
 
 <template>
   <main class="min-h-screen bg-gray-50 pb-20 pt-6">
-    <div class="max-w-7xl mx-auto px-6 md:px-12">
+    <div class="max-w-7xl mx-auto px-4 md:px-12">
       
       <div v-if="isLoading" class="flex justify-center py-32">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
@@ -109,25 +109,25 @@ const socialMedia = computed(() => {
 
       <div v-else>
         <!-- Breadcrumbs -->
-        <nav class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+        <nav class="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-500 mb-4 md:mb-6">
           <RouterLink to="/" class="hover:text-emerald-600 transition-colors">Home</RouterLink>
           <ChevronRight class="w-4 h-4" />
           <span class="text-emerald-700 font-medium truncate max-w-xs">{{ merchant.name }}</span>
         </nav>
 
         <!-- Merchant Header Profile -->
-        <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 mb-12">
+        <div class="bg-white rounded-2xl md:rounded-3xl overflow-hidden shadow-sm border border-gray-100 mb-8 md:mb-12">
           <!-- Banner -->
-          <div class="h-48 md:h-64 relative bg-gray-900">
+          <div class="h-36 md:h-64 relative bg-gray-900">
             <img :src="merchant.storefront_image || '/images/merchant.png'" alt="Storefront Banner" class="w-full h-full object-cover opacity-90" />
             <div class="absolute inset-0 bg-black/10"></div>
           </div>
           
-          <div class="relative px-6 md:px-12 pb-8">
+          <div class="relative px-4 md:px-12 pb-5 md:pb-8">
             <div class="flex flex-col md:flex-row gap-6 relative z-10">
               
               <!-- Avatar (Tarik ke atas banner) -->
-              <div class="-mt-16 w-32 h-32 rounded-2xl border-4 border-white overflow-hidden bg-white shadow-lg shrink-0">
+              <div class="-mt-12 md:-mt-16 w-24 h-24 md:w-32 md:h-32 rounded-xl md:rounded-2xl border-4 border-white overflow-hidden bg-white shadow-lg shrink-0">
                 <img :src="merchant.logo || '/images/bumn.png'" alt="Merchant Logo" class="w-full h-full object-cover" />
               </div>
 
@@ -135,8 +135,8 @@ const socialMedia = computed(() => {
               <div class="flex-1 mt-2 md:mt-4">
                 <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
                   <div>
-                    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">{{ merchant.name }}</h1>
-                    <div class="flex flex-wrap gap-4 text-sm text-gray-600 font-medium">
+                    <h1 class="text-xl md:text-3xl font-extrabold text-gray-900 mb-1.5 md:mb-2">{{ merchant.name }}</h1>
+                    <div class="flex flex-wrap gap-2 md:gap-4 text-xs md:text-sm text-gray-600 font-medium">
                        <div class="flex items-center gap-1.5"><Store class="w-4 h-4 text-emerald-600" /> Pemilik: <span class="font-bold">{{ merchant.owner_name || '-' }}</span></div>
                        <div class="flex items-center gap-1.5"><LayoutGrid class="w-4 h-4 text-emerald-600" /> {{ merchantProducts.length }} Produk</div>
                     </div>
@@ -151,10 +151,10 @@ const socialMedia = computed(() => {
             </div>
 
             <!-- Content Grid: Description & Contacts -->
-            <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="mt-5 md:mt-8 grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
               
               <!-- Description Box -->
-              <div class="lg:col-span-2 bg-emerald-50/50 rounded-2xl p-6 border border-emerald-100">
+              <div class="lg:col-span-2 bg-emerald-50/50 rounded-xl md:rounded-2xl p-4 md:p-6 border border-emerald-100">
                 <h3 class="flex items-center gap-2 text-sm font-bold text-gray-900 mb-3">
                   <Info class="w-4 h-4 text-emerald-600" /> Tentang Usaha Kami
                 </h3>
@@ -164,7 +164,7 @@ const socialMedia = computed(() => {
               </div>
 
               <!-- Contact & Location Box -->
-              <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-fit">
+              <div class="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-fit">
                 <h3 class="flex items-center gap-2 text-base font-bold text-gray-900 mb-5 relative pb-3">
                   <Phone class="w-5 h-5 text-emerald-600" /> Lokasi & Kontak
                   <div class="absolute bottom-0 left-0 w-12 h-1 bg-emerald-500 rounded-full"></div>
@@ -222,7 +222,7 @@ const socialMedia = computed(() => {
 
         <!-- Catalog Section -->
         <div class="mb-10 flex items-center justify-between border-b border-gray-200 pb-4">
-            <h2 class="text-2xl font-bold text-gray-900">Katalog Produk Toko</h2>
+            <h2 class="text-xl md:text-2xl font-bold text-gray-900">Katalog Produk Toko</h2>
         </div>
 
         <div v-if="merchantProducts.length === 0" class="text-center py-20 bg-white rounded-2xl border border-gray-100">
@@ -233,7 +233,7 @@ const socialMedia = computed(() => {
              <p class="text-gray-500 text-sm max-w-sm mx-auto">Merchant ini belum menambahkan produk apa pun ke dalam katalognya.</p>
         </div>
         
-        <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 lg:gap-6">
+        <div v-else class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
           <RouterLink 
             v-for="product in merchantProducts" 
             :key="product.id" 
@@ -249,9 +249,9 @@ const socialMedia = computed(() => {
                 KOSONG
               </div>
             </div>
-            <div class="p-4 flex flex-col flex-grow">
-              <h3 class="text-sm font-medium text-gray-900 mb-2 line-clamp-2">{{ product.name }}</h3>
-              <p class="text-emerald-600 font-bold text-lg mb-1 mt-auto">{{ formatPrice(product.price) }}</p>
+            <div class="p-3 md:p-4 flex flex-col flex-grow">
+              <h3 class="text-xs md:text-sm font-medium text-gray-900 mb-1.5 md:mb-2 line-clamp-2">{{ product.name }}</h3>
+              <p class="text-emerald-600 font-bold text-sm md:text-lg mb-1 mt-auto">{{ formatPrice(product.price) }}</p>
             </div>
           </RouterLink>
         </div>
