@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { 
   Plus, 
   Search, 
@@ -10,8 +10,6 @@ import {
   Save,
   X
 } from 'lucide-vue-next'
-
-import { onMounted } from 'vue'
 
 // State untuk mengontrol mode tampilan
 const isFormMode = ref(false)
@@ -36,6 +34,21 @@ const filteredProducts = computed(() => {
   })
 })
 
+// === PAGINATION ===
+const currentPage = ref(1)
+const itemsPerPage = ref(10)
+const totalPages = computed(() => Math.ceil(filteredProducts.value.length / itemsPerPage.value))
+
+const paginatedProducts = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return filteredProducts.value.slice(start, end)
+})
+
+watch([searchQuery, selectedCategory], () => {
+  currentPage.value = 1
+})
+
 const imageFile = ref<File | null>(null)
 const imagePreviewUrl = ref('')
 const galleryFiles = ref<File[]>([])
@@ -50,7 +63,7 @@ const formData = ref({
   description: '',
   stock: 0,
   unit: 'pcs',
-  image: '/images/kripik_main.png',
+  image: '',
   gallery_images: [] as string[],
   is_active: true,
   is_featured: false,
@@ -88,7 +101,7 @@ const openAddForm = () => {
     price: 0,
     stock: 0,
     unit: 'pcs',
-    image: '/images/kripik_main.png',
+    image: '',
     gallery_images: [],
     is_active: true,
     is_featured: false,
@@ -122,7 +135,7 @@ const openEditForm = (product: any) => {
     description: product.description || '',
     stock: product.stock,
     unit: product.unit || 'pcs',
-    image: product.image || '/images/kripik_main.png',
+    image: product.image || '',
     gallery_images: parsedGallery,
     is_active: product.is_active,
     is_featured: product.is_featured,
@@ -190,7 +203,14 @@ const saveProduct = async () => {
     payload.append('unit', formData.value.unit || 'pcs')
     payload.append('is_active', formData.value.is_active ? '1' : '0')
     payload.append('is_featured', formData.value.is_featured ? '1' : '0')
-    payload.append('buy_links', JSON.stringify(formData.value.buy_links))
+    
+    // Trim URL links before saving
+    payload.append('buy_links', JSON.stringify({
+      whatsapp: formData.value.buy_links?.whatsapp?.trim() || '',
+      grabfood: formData.value.buy_links?.grabfood?.trim() || '',
+      gofood: formData.value.buy_links?.gofood?.trim() || '',
+      shopee: formData.value.buy_links?.shopee?.trim() || ''
+    }))
 
     if (imageFile.value) {
       payload.append('image_file', imageFile.value)
@@ -305,7 +325,7 @@ const formatRupiah = (number: number) => {
               <tr v-else-if="filteredProducts.length === 0">
                 <td colspan="6" class="text-center py-8 text-gray-500">Belum ada produk.</td>
               </tr>
-              <tr v-else v-for="prod in filteredProducts" :key="prod.id" class="hover:bg-gray-50/50 transition-colors">
+              <tr v-else v-for="prod in paginatedProducts" :key="prod.id" class="hover:bg-gray-50/50 transition-colors">
                 <td class="py-4 px-6 flex items-center gap-4">
                   <img :src="prod.image || '/images/kripik_main.png'" alt="Produk" class="w-12 h-12 rounded-lg object-cover border border-gray-100" />
                   <span class="font-medium text-gray-900">{{ prod.name }}</span>
@@ -335,6 +355,36 @@ const formatRupiah = (number: number) => {
             </tbody>
           </table>
         </div>
+
+        <!-- Pagination Controls -->
+        <div v-if="totalPages > 1" class="flex items-center justify-between bg-white px-4 py-3 border-t border-gray-100 sm:px-6">
+          <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm text-gray-700">
+                Menampilkan <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span> - <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredProducts.length) }}</span> dari <span class="font-medium">{{ filteredProducts.length }}</span> data
+              </p>
+            </div>
+            <div>
+              <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                <button @click="currentPage--" :disabled="currentPage === 1" class="relative inline-flex items-center rounded-l-md px-3 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 font-bold">
+                  &lt;
+                </button>
+                <button v-for="page in totalPages" :key="page" @click="currentPage = page" :class="[currentPage === page ? 'relative z-10 inline-flex items-center bg-emerald-600 px-4 py-2 text-sm font-semibold text-white focus:z-20' : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20']">
+                  {{ page }}
+                </button>
+                <button @click="currentPage++" :disabled="currentPage === totalPages" class="relative inline-flex items-center rounded-r-md px-3 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 font-bold">
+                  &gt;
+                </button>
+              </nav>
+            </div>
+          </div>
+          <div class="flex flex-1 justify-between sm:hidden items-center">
+            <button @click="currentPage--" :disabled="currentPage === 1" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Prev</button>
+            <span class="text-sm font-medium text-gray-700">{{ currentPage }} / {{ totalPages }}</span>
+            <button @click="currentPage++" :disabled="currentPage === totalPages" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Next</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
