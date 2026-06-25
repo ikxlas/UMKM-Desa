@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { 
   Plus, 
   Search, 
@@ -49,15 +49,12 @@ const formIconType = ref<'preset' | 'custom'>('preset')
 const formIconFile = ref<File | null>(null)
 const iconPreviewUrl = ref('')
 
-import { onMounted } from 'vue'
-
 // State Kategori
 const categories = ref<any[]>([])
 const isLoading = ref(false)
 
 // State Pencarian
 const searchQuery = ref('')
-import { computed } from 'vue'
 
 const filteredCategories = computed(() => {
   if (!searchQuery.value) return categories.value
@@ -65,6 +62,21 @@ const filteredCategories = computed(() => {
   return categories.value.filter(c => 
     c.name.toLowerCase().includes(q)
   )
+})
+
+// === PAGINATION ===
+const currentPage = ref(1)
+const itemsPerPage = ref(12)
+const totalPages = computed(() => Math.ceil(filteredCategories.value.length / itemsPerPage.value))
+
+const paginatedCategories = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value
+  const end = start + itemsPerPage.value
+  return filteredCategories.value.slice(start, end)
+})
+
+watch(searchQuery, () => {
+  currentPage.value = 1
 })
 
 // Pilihan Ikon untuk Form
@@ -262,7 +274,7 @@ const deleteCategory = async (id: number) => {
     </div>
 
     <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="cat in filteredCategories" :key="cat.id" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex items-start justify-between">
+      <div v-for="cat in paginatedCategories" :key="cat.id" class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group flex items-start justify-between">
         <div class="flex items-center gap-4">
           <div class="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center text-emerald-600 group-hover:bg-emerald-100 transition-colors overflow-hidden shrink-0">
             <component v-if="!cat.isCustom" :is="cat.icon" class="w-7 h-7" />
@@ -281,6 +293,35 @@ const deleteCategory = async (id: number) => {
             <Trash2 class="w-4 h-4" />
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div v-if="totalPages > 1" class="flex items-center justify-between bg-white px-4 py-3 border border-gray-100 rounded-2xl shadow-sm sm:px-6">
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Menampilkan <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span> - <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredCategories.length) }}</span> dari <span class="font-medium">{{ filteredCategories.length }}</span> data
+          </p>
+        </div>
+        <div>
+          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+            <button @click="currentPage--" :disabled="currentPage === 1" class="relative inline-flex items-center rounded-l-md px-3 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 font-bold">
+              &lt;
+            </button>
+            <button v-for="page in totalPages" :key="page" @click="currentPage = page" :class="[currentPage === page ? 'relative z-10 inline-flex items-center bg-emerald-600 px-4 py-2 text-sm font-semibold text-white focus:z-20' : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20']">
+              {{ page }}
+            </button>
+            <button @click="currentPage++" :disabled="currentPage === totalPages" class="relative inline-flex items-center rounded-r-md px-3 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 font-bold">
+              &gt;
+            </button>
+          </nav>
+        </div>
+      </div>
+      <div class="flex flex-1 justify-between sm:hidden items-center">
+        <button @click="currentPage--" :disabled="currentPage === 1" class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Prev</button>
+        <span class="text-sm font-medium text-gray-700">{{ currentPage }} / {{ totalPages }}</span>
+        <button @click="currentPage++" :disabled="currentPage === totalPages" class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50">Next</button>
       </div>
     </div>
 
