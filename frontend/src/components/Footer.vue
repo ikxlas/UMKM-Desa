@@ -4,10 +4,10 @@ import { Leaf, Share2, Globe } from 'lucide-vue-next'
 </script>
 
 <template>
-  <footer class="bg-gray-50 pt-16 pb-8 border-t border-gray-200 mt-20 px-6 md:px-12">
+  <footer class="bg-gray-50 pt-12 md:pt-16 pb-8 border-t border-gray-200 mt-12 md:mt-20 px-4 md:px-12">
     <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
       <!-- Brand & Description -->
-      <div class="col-span-1 md:col-span-1 pr-8">
+      <div class="col-span-1 md:col-span-1 md:pr-8">
         <h3 class="text-emerald-700 font-bold text-xl tracking-tight mb-4">UMKM Desa Purwoasri</h3>
         <p class="text-gray-500 text-sm leading-relaxed mb-6">
           Platform marketplace resmi untuk mempromosikan produk-produk unggulan karya warga Desa Purwoasri.
