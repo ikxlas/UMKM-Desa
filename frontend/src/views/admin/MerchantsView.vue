@@ -25,6 +25,19 @@ const isLoading = ref(false)
 // Data Merchant dari API
 const merchants = ref<any[]>([])
 
+// State Pencarian
+const searchQuery = ref('')
+import { computed } from 'vue'
+
+const filteredMerchants = computed(() => {
+  if (!searchQuery.value) return merchants.value
+  const q = searchQuery.value.toLowerCase()
+  return merchants.value.filter(m => 
+    m.name.toLowerCase().includes(q) || 
+    (m.owner_name && m.owner_name.toLowerCase().includes(q))
+  )
+})
+
 const logoFile = ref<File | null>(null)
 const logoPreviewUrl = ref('')
 const storefrontFile = ref<File | null>(null)
@@ -222,6 +235,7 @@ const deleteMerchant = async (id: number) => {
           <Search class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input 
             type="text" 
+            v-model="searchQuery"
             placeholder="Cari nama toko atau pemilik..." 
             class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
           />
@@ -246,10 +260,10 @@ const deleteMerchant = async (id: number) => {
                   <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600 mx-auto"></div>
                 </td>
               </tr>
-              <tr v-else-if="merchants.length === 0">
-                <td colspan="4" class="text-center py-8 text-gray-500">Belum ada merchant terdaftar.</td>
+              <tr v-else-if="filteredMerchants.length === 0">
+                <td colspan="4" class="text-center py-8 text-gray-500">Merchant tidak ditemukan.</td>
               </tr>
-              <tr v-else v-for="merchant in merchants" :key="merchant.id" class="hover:bg-gray-50/50 transition-colors">
+              <tr v-else v-for="merchant in filteredMerchants" :key="merchant.id" class="hover:bg-gray-50/50 transition-colors">
                 <td class="py-4 px-6 flex items-center gap-4">
                   <img :src="merchant.logo || '/images/merchant.png'" alt="Logo" class="w-10 h-10 rounded-full object-cover border border-gray-200" />
                   <span class="font-bold text-gray-900">{{ merchant.name }}</span>
@@ -280,7 +294,7 @@ const deleteMerchant = async (id: number) => {
     </div>
 
     <!-- MODE FORMULIR (FORM) -->
-    <div v-else class="space-y-6 max-w-5xl mx-auto">
+    <div v-else class="space-y-6 max-w-5xl mx-auto pb-24 md:pb-0">
       <!-- Form Header -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
