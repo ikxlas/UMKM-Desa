@@ -21,9 +21,9 @@ class MerchantController extends Controller
             'address' => 'nullable|string',
             'description' => 'nullable|string',
             'logo' => 'nullable|string',
-            'logo_file' => 'nullable|image|max:10240',
+            'logo_file' => 'nullable|image|max:2048',
             'storefront_image' => 'nullable|string',
-            'storefront_file' => 'nullable|image|max:10240',
+            'storefront_file' => 'nullable|image|max:2048',
             'social_media' => 'nullable|string'
         ]);
 
@@ -58,9 +58,9 @@ class MerchantController extends Controller
             'address' => 'nullable|string',
             'description' => 'nullable|string',
             'logo' => 'nullable|string',
-            'logo_file' => 'nullable|image|max:10240',
+            'logo_file' => 'nullable|image|max:2048',
             'storefront_image' => 'nullable|string',
-            'storefront_file' => 'nullable|image|max:10240',
+            'storefront_file' => 'nullable|image|max:2048',
             'social_media' => 'nullable|string'
         ]);
 
