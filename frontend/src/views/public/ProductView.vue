@@ -216,7 +216,7 @@ const buyLinksParsed = computed(() => {
             </div>
 
             <!-- Action Buttons -->
-            <div class="mt-auto">
+            <div class="mt-0">
               <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
                 <ShoppingBag class="w-5 h-5 text-emerald-600" /> Opsi Pemesanan Langsung
               </h3>
