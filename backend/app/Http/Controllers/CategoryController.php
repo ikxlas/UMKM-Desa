@@ -18,7 +18,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'icon_type' => 'required|string|in:preset,custom',
             'icon_value' => 'nullable|string',
-            'icon_file' => 'nullable|image|max:5120'
+            'icon_file' => 'nullable|image|max:2048'
         ]);
 
         if ($request->hasFile('icon_file')) {
@@ -45,7 +45,7 @@ class CategoryController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'icon_type' => 'sometimes|required|string|in:preset,custom',
             'icon_value' => 'nullable|string',
-            'icon_file' => 'nullable|image|max:5120',
+            'icon_file' => 'nullable|image|max:2048',
             'is_active' => 'boolean'
         ]);
 
