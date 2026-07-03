@@ -13,7 +13,7 @@ import {
 
 // State untuk mengontrol mode tampilan
 const isFormMode = ref(false)
-const editingProductId = ref<number | null>(null)
+const editingProductId = ref<string | null>(null)
 const isLoading = ref(false)
 
 // Data API
@@ -160,8 +160,8 @@ const closeForm = () => {
 const handleImageUpload = (e: any) => {
   const file = e.target.files[0]
   if (file) {
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Ukuran foto utama tidak boleh melebihi 10 MB!');
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Ukuran foto utama tidak boleh melebihi 2 MB!');
       e.target.value = '';
       return;
     }
@@ -175,9 +175,9 @@ const handleGalleryUpload = (e: any) => {
   const files = Array.from(e.target.files) as File[]
   
   // Periksa apakah ada file yang melebihi 10MB
-  const oversizedFiles = files.filter(f => f.size > 10 * 1024 * 1024)
+  const oversizedFiles = files.filter(f => f.size > 2 * 1024 * 1024)
   if (oversizedFiles.length > 0) {
-    alert('Ada foto galeri yang melebihi batas 10 MB! Harap pilih gambar yang lebih kecil.');
+    alert('Ada foto galeri yang melebihi batas 2 MB! Harap pilih gambar yang lebih kecil.');
     e.target.value = '';
     return;
   }
@@ -264,7 +264,7 @@ const saveProduct = async () => {
   }
 }
 
-const deleteProduct = async (id: number) => {
+const deleteProduct = async (id: string) => {
   if (!confirm('Yakin ingin menghapus produk ini?')) return
   try {
     await fetch(`http://127.0.0.1:8000/api/products/${id}`, {
