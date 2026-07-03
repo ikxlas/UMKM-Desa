@@ -334,7 +334,7 @@ const getRandomSoldInfo = (id: number) => {
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           <!-- Main Merchant Card (Index 0) -->
-          <div v-if="merchants[0]" class="lg:col-span-2 relative rounded-2xl overflow-hidden h-[200px] md:h-[300px] shadow-lg group cursor-pointer">
+          <RouterLink :to="`/merchant/${merchants[0].id}`" v-if="merchants[0]" class="block lg:col-span-2 relative rounded-2xl overflow-hidden h-[200px] md:h-[300px] shadow-lg group cursor-pointer">
             <img :src="getMerchantImage(merchants[0])" :alt="merchants[0].name" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
             
@@ -348,11 +348,11 @@ const getRandomSoldInfo = (id: number) => {
                 Lihat Toko
               </button>
             </div>
-          </div>
+          </RouterLink>
 
           <!-- Smaller Merchant Cards (Index 1 & 2) -->
           <div class="flex flex-col gap-4 md:gap-6">
-            <div v-for="(m, idx) in merchants.slice(1, 3)" :key="m.id" class="bg-white rounded-2xl p-4 md:p-6 border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer relative overflow-hidden group">
+            <RouterLink :to="`/merchant/${m.id}`" v-for="(m, idx) in merchants.slice(1, 3)" :key="m.id" class="block bg-white rounded-2xl p-4 md:p-6 border border-gray-100 hover:shadow-lg transition-shadow cursor-pointer relative overflow-hidden group">
               <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-3 md:mb-4 group-hover:bg-emerald-100 transition-colors">
                 <img v-if="m.logo || m.image" :src="m.logo || m.image" class="w-7 h-7 md:w-8 md:h-8 rounded-full object-cover" />
                 <Store v-else class="w-5 h-5 md:w-6 md:h-6" />
@@ -363,7 +363,7 @@ const getRandomSoldInfo = (id: number) => {
                 Kunjungi Merchant <ArrowRight class="w-4 h-4" />
               </div>
               <LayoutGrid class="absolute -bottom-4 -right-4 w-32 h-32 text-gray-50 opacity-50 group-hover:scale-110 transition-transform duration-500 pointer-events-none" />
-            </div>
+            </RouterLink>
           </div>
         </div>
       </div>
