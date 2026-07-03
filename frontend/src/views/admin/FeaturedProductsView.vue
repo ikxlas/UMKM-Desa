@@ -50,7 +50,7 @@ const getProductsFromIds = (jsonIds: string): any[] => {
   try {
     const ids = JSON.parse(jsonIds)
     if (!Array.isArray(ids)) return []
-    return ids.map((id: number) => allProducts.value.find(p => p.id === id)).filter(Boolean)
+    return ids.map((id: string) => allProducts.value.find(p => String(p.id) === String(id))).filter(Boolean)
   } catch(e) {
     return []
   }
@@ -82,10 +82,10 @@ const addProduct = (settingKey: string, category: string) => {
   if (category === 'bestseller') idStr = newBestsellerId.value
   if (category === 'recommended') idStr = newRecommendedId.value
 
-  const id = parseInt(idStr)
+  const id = idStr.trim()
   if(!id) return
 
-  let currentIds: number[] = []
+  let currentIds: string[] = []
   try { currentIds = JSON.parse(settings.value[settingKey]) } catch(e) {}
   
   if(!currentIds.includes(id)) {
@@ -99,11 +99,11 @@ const addProduct = (settingKey: string, category: string) => {
   if (category === 'recommended') newRecommendedId.value = ''
 }
 
-const removeProduct = (settingKey: string, id: number) => {
-  let currentIds = []
+const removeProduct = (settingKey: string, id: string) => {
+  let currentIds: string[] = []
   try { currentIds = JSON.parse(settings.value[settingKey]) } catch(e) {}
   
-  const updatedIds = currentIds.filter((item: number) => item !== id)
+  const updatedIds = currentIds.filter((item: string) => String(item) !== String(id))
   settings.value[settingKey] = JSON.stringify(updatedIds)
   saveSettings()
 }
@@ -146,7 +146,7 @@ const removeProduct = (settingKey: string, id: number) => {
           <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
               <select v-model="newTrendingId" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition-shadow bg-white">
-                <option value="">Pilih Produk dari Database...</option>
+                <option value="">Pilih Produk</option>
                 <option v-for="p in allProducts" :key="p.id" :value="p.id">{{ p.name }} - {{ p.merchant?.name }}</option>
               </select>
             </div>
