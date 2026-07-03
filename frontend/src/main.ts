@@ -25,7 +25,18 @@ window.fetch = async (...args) => {
       config.headers = headers;
     }
   }
-  return originalFetch(resource, config);
+  const response = await originalFetch(resource, config);
+  
+  // Jika server merespon dengan 401 Unauthorized (kecuali pada endpoint login)
+  // artinya token sudah tidak valid (misal karena database telah di-reset/migrasi).
+  // Hapus token lokal dan arahkan pengguna kembali ke halaman login.
+  if (response.status === 401 && typeof resource === 'string' && resource.startsWith('http://127.0.0.1:8000/api') && !resource.endsWith('/api/login')) {
+    localStorage.removeItem('admin_token');
+    localStorage.removeItem('admin_user');
+    window.location.href = '/admin/login';
+  }
+  
+  return response;
 };
 
 app.mount('#app')

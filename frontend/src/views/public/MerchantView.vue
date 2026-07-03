@@ -253,10 +253,7 @@ const socialMedia = computed(() => {
           >
             <div class="relative aspect-square overflow-hidden bg-gray-100">
               <img :src="getProductImage(product)" :alt="product.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div v-if="product.stock > 0" class="absolute top-3 left-3 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-1 rounded">
-                READY STOCK
-              </div>
-              <div v-else class="absolute top-3 left-3 bg-red-100 text-red-800 text-[10px] font-bold px-2 py-1 rounded">
+              <div v-if="product.stock <= 0" class="absolute top-3 left-3 bg-red-100 text-red-800 text-[10px] font-bold px-2 py-1 rounded">
                 KOSONG
               </div>
             </div>

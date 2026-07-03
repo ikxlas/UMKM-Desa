@@ -246,8 +246,8 @@ const getRandomSoldInfo = (id: number) => {
           <RouterLink :to="`/product/${p.id}`" v-for="(p, idx) in bestsellerProducts.slice(0, 5)" :key="p.id" class="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow cursor-pointer group">
             <div class="relative h-32 md:h-48 overflow-hidden bg-gray-100">
               <img :src="getProductImage(p)" :alt="p.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div v-if="p.stock" class="absolute top-2 left-2 md:top-3 md:left-3 bg-emerald-100 text-emerald-800 text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">
-                READY STOCK
+              <div v-if="p.stock <= 0" class="absolute top-2 left-2 md:top-3 md:left-3 bg-red-100 text-red-800 text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded">
+                KOSONG
               </div>
             </div>
             <div class="p-3 md:p-4">

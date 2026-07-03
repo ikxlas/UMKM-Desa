@@ -23,8 +23,8 @@ class ProductController extends Controller
             'stock' => 'required|integer',
             'unit' => 'required|string',
             'image' => 'nullable|string',
-            'image_file' => 'nullable|image|max:5120',
-            'gallery_files.*' => 'nullable|image|max:5120',
+            'image_file' => 'nullable|image|max:10240',
+            'gallery_files.*' => 'nullable|image|max:10240',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'buy_links' => 'nullable|string'
@@ -70,8 +70,8 @@ class ProductController extends Controller
             'stock' => 'sometimes|required|integer',
             'unit' => 'sometimes|required|string',
             'image' => 'nullable|string',
-            'image_file' => 'nullable|image|max:5120',
-            'gallery_files.*' => 'nullable|image|max:5120',
+            'image_file' => 'nullable|image|max:10240',
+            'gallery_files.*' => 'nullable|image|max:10240',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
             'buy_links' => 'nullable|string'

@@ -49,6 +49,11 @@ const router = createRouter({
       component: HelpView,
     },
     {
+      path: '/event',
+      name: 'event',
+      component: () => import('../views/public/EventView.vue'),
+    },
+    {
       path: '/admin/login',
       name: 'admin-login',
       component: LoginView,

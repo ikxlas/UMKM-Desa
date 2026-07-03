@@ -186,6 +186,11 @@ const toggleMobileMenu = () => {
           :class="isActive('/about') ? 'text-emerald-600 border-emerald-600 font-semibold' : 'text-gray-600 border-transparent hover:text-emerald-600'"
         >Tentang Kami</RouterLink>
         <RouterLink 
+          to="/event" 
+          class="py-1 border-b-2 transition-colors"
+          :class="isActive('/event') ? 'text-emerald-600 border-emerald-600 font-semibold' : 'text-gray-600 border-transparent hover:text-emerald-600'"
+        >Event</RouterLink>
+        <RouterLink 
           to="/help" 
           class="py-1 border-b-2 transition-colors"
           :class="isActive('/help') ? 'text-emerald-600 border-emerald-600 font-semibold' : 'text-gray-600 border-transparent hover:text-emerald-600'"
@@ -400,6 +405,14 @@ const toggleMobileMenu = () => {
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           Tentang Kami
+        </RouterLink>
+        <RouterLink 
+          to="/event" 
+          class="flex items-center gap-3 px-5 py-3 text-sm font-medium transition-colors"
+          :class="isActive('/event') ? 'text-emerald-600 bg-emerald-50 border-l-4 border-emerald-600' : 'text-gray-700 hover:bg-gray-50 border-l-4 border-transparent'"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          Event
         </RouterLink>
         <RouterLink 
           to="/help" 

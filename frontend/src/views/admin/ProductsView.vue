@@ -160,6 +160,11 @@ const closeForm = () => {
 const handleImageUpload = (e: any) => {
   const file = e.target.files[0]
   if (file) {
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Ukuran foto utama tidak boleh melebihi 10 MB!');
+      e.target.value = '';
+      return;
+    }
     imageFile.value = file
     imagePreviewUrl.value = URL.createObjectURL(file)
   }
@@ -168,6 +173,15 @@ const handleImageUpload = (e: any) => {
 const handleGalleryUpload = (e: any) => {
   if (!e.target.files) return
   const files = Array.from(e.target.files) as File[]
+  
+  // Periksa apakah ada file yang melebihi 10MB
+  const oversizedFiles = files.filter(f => f.size > 10 * 1024 * 1024)
+  if (oversizedFiles.length > 0) {
+    alert('Ada foto galeri yang melebihi batas 10 MB! Harap pilih gambar yang lebih kecil.');
+    e.target.value = '';
+    return;
+  }
+
   // limit to 4
   const existingCount = (formData.value.gallery_images || []).length
   const availableSlots = 4 - existingCount - galleryFiles.value.length
