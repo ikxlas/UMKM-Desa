@@ -115,7 +115,7 @@ const clearSearch = () => {
   showDropdown.value = false
 }
 
-const navigateToProduct = (id: number) => {
+const navigateToProduct = (id: string) => {
   isNavigating.value = true
   showDropdown.value = false
   searchQuery.value = ''
