@@ -172,6 +172,11 @@ const closeModal = () => {
 const handleIconUpload = (e: any) => {
   const file = e.target.files[0]
   if (file) {
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Ukuran ikon tidak boleh melebihi 2 MB!');
+      e.target.value = '';
+      return;
+    }
     formIconFile.value = file
     iconPreviewUrl.value = URL.createObjectURL(file)
   }
