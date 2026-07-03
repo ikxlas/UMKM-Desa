@@ -140,8 +140,8 @@ const closeForm = () => {
 const handleLogoUpload = (e: any) => {
   const file = e.target.files[0]
   if (file) {
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Ukuran logo tidak boleh melebihi 10 MB!');
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Ukuran logo tidak boleh melebihi 2 MB!');
       e.target.value = '';
       return;
     }
@@ -153,8 +153,8 @@ const handleLogoUpload = (e: any) => {
 const handleStorefrontUpload = (e: any) => {
   const file = e.target.files[0]
   if (file) {
-    if (file.size > 10 * 1024 * 1024) {
-      alert('Ukuran foto tempat usaha tidak boleh melebihi 10 MB!');
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Ukuran foto tempat usaha tidak boleh melebihi 2 MB!');
       e.target.value = '';
       return;
     }
