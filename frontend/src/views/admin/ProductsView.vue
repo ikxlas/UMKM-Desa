@@ -521,7 +521,7 @@ const formatRupiah = (number: number) => {
                 <template v-if="!imagePreviewUrl && !formData.image">
                   <p class="text-sm text-emerald-600 font-medium">Klik untuk memilih gambar</p>
                   <p class="text-xs text-gray-400 mt-1">Disarankan format JPG/PNG kualitas tinggi</p>
-                  <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 5MB</p>
+                  <p class="text-xs text-gray-400">Rasio 1:1, Maksimal 2MB</p>
                 </template>
                 <div v-else class="absolute inset-0 pointer-events-none">
                   <img :src="imagePreviewUrl || formData.image" class="w-full h-full object-cover" />
