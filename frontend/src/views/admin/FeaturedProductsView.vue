@@ -202,7 +202,7 @@ const removeProduct = (settingKey: string, id: string) => {
           <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
               <select v-model="newBestsellerId" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none transition-shadow bg-white">
-                <option value="">Pilih Produk dari Database...</option>
+                <option value="">Pilih Produk</option>
                 <option v-for="p in allProducts" :key="p.id" :value="p.id">{{ p.name }} - {{ p.merchant?.name }}</option>
               </select>
             </div>
@@ -258,7 +258,7 @@ const removeProduct = (settingKey: string, id: string) => {
           <div class="flex flex-col sm:flex-row gap-3">
             <div class="relative flex-1">
               <select v-model="newRecommendedId" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none transition-shadow bg-white">
-                <option value="">Pilih Produk dari Database...</option>
+                <option value="">Pilih Produk</option>
                 <option v-for="p in allProducts" :key="p.id" :value="p.id">{{ p.name }} - {{ p.merchant?.name }}</option>
               </select>
             </div>
