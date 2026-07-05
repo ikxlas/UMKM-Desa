@@ -73,7 +73,7 @@ import { ChevronRight, MapPin, Mail, Phone, Clock, Target, Heart, Award } from '
           </div>
         </div>
         <div class="relative h-[250px] md:h-[400px] rounded-2xl overflow-hidden">
-          <img src="/images/merchant.png" alt="Pengrajin Purwoasri" class="absolute inset-0 w-full h-full object-cover" />
+          <img src="/images/banner.png" alt="Pengrajin Purwoasri" class="absolute inset-0 w-full h-full object-cover" />
         </div>
       </div>
 
