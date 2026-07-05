@@ -53,7 +53,7 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+  <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
     
     <!-- Background Decoration -->
     <div class="absolute inset-0 z-0 pointer-events-none">
@@ -61,11 +61,9 @@ const handleLogin = async () => {
       <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-teal-500/20 blur-3xl rounded-full"></div>
     </div>
 
-    <div class="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-      <div class="flex justify-center mb-6">
-        <div class="bg-gradient-to-tr from-emerald-600 to-teal-500 p-3 rounded-2xl shadow-lg border border-white/20">
-          <Lock class="w-8 h-8 text-white stroke-[1.5]" />
-        </div>
+    <div class="w-full max-w-sm mx-auto sm:max-w-md relative z-10">
+      <div class="flex justify-center mb-6 hover:scale-105 transition-transform duration-300">
+        <img src="/images/logo1.png" alt="Logo Admin" class="h-24 sm:h-28 w-auto object-contain drop-shadow-xl" />
       </div>
       <h2 class="text-center text-3xl font-extrabold text-gray-900 tracking-tight">
         Masuk Dasbor Admin
@@ -75,8 +73,8 @@ const handleLogin = async () => {
       </p>
     </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-      <div class="bg-white/80 backdrop-blur-xl py-10 px-6 sm:px-10 shadow-2xl border border-gray-100 rounded-3xl">
+    <div class="mt-8 w-full max-w-sm mx-auto sm:max-w-md relative z-10">
+      <div class="bg-white/80 backdrop-blur-xl py-8 px-5 sm:py-10 sm:px-10 shadow-2xl border border-gray-100 rounded-2xl sm:rounded-3xl">
         <form class="space-y-6" @submit.prevent="handleLogin">
           
           <div v-if="errorMessage" class="bg-red-50/80 backdrop-blur border border-red-200 text-red-600 text-sm p-4 rounded-xl flex items-center gap-3">
