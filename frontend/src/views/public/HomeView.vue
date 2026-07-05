@@ -44,8 +44,8 @@ const merchants = ref<any[]>([])
 const allProducts = ref<any[]>([])
 const settings = ref<any>({
   hero_headline: 'Produk Lokal Terbaik Desa',
-  hero_subtitle: 'Dukung pengrajin dan petani lokal Desa Purwoasri dengan produk berkualitas tinggi langsung dari sumbernya.',
-  hero_image: '/images/hero.png',
+  hero_subtitle: 'Membangun Ekonomi Desa Melalui Digitalisasi, Semua Produk Unggulan Desa Purwoasri dalam Satu Platform.',
+  hero_image: '/images/hero1.png',
   promo_is_active: false,
   promo_title: '',
   promo_link: '',
