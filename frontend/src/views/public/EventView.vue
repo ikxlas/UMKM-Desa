@@ -5,10 +5,10 @@ import { ChevronRight, ChevronLeft, Calendar, MapPin } from 'lucide-vue-next'
 
 // Original Slides List
 const originalSlides = [
-  '/images/hero.png',
-  '/images/emping_main.png',
-  '/images/kripik_main.png',
-  '/images/merchant.png'
+  '/images/banner4.png',
+  '/images/banner3.png',
+  '/images/banner2.png',
+  '/images/banner1.png'
 ]
 
 // To handle seamless infinite horizontal scrolling, we clone boundary slides:
