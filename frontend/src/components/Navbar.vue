@@ -158,50 +158,53 @@ const toggleMobileMenu = () => {
 </script>
 
 <template>
-  <nav class="bg-white border-b border-gray-100 sticky top-0 z-50">
+  <nav class="bg-white/80 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50 transition-all shadow-sm">
     <!-- Main Bar -->
-    <div class="py-3 px-4 md:py-4 md:px-12 flex items-center justify-between gap-3">
+    <div class="py-3 px-4 md:py-3.5 md:px-12 flex items-center justify-between gap-4">
       <!-- Logo -->
-      <div class="flex items-center gap-4 md:gap-8 shrink-0">
-        <RouterLink to="/" class="text-emerald-700 font-bold text-lg md:text-xl tracking-tight">
-          UMKM Desa
+      <div class="flex items-center shrink-0">
+        <RouterLink to="/" class="flex items-center font-extrabold text-2xl md:text-[28px] tracking-tight hover:scale-105 transition-transform duration-300">
+          <img src="/images/logo.png" alt="Logo" class="w-14 h-14 md:w-16 md:h-16 object-contain drop-shadow-md transform scale-125 md:scale-150" />
+          <div class="-ml-1 md:-ml-2 z-10">
+            <span class="text-[#00478F]">Purwo</span><span class="text-[#7AB538]">mart</span>
+          </div>
         </RouterLink>
       </div>
 
-      <!-- Nav Links (Desktop) -->
-      <div class="hidden md:flex items-center gap-6 text-sm font-medium">
+      <!-- Nav Links (Desktop) - Pill Style -->
+      <div class="hidden lg:flex items-center gap-1.5 text-sm font-medium bg-gray-50/80 p-1.5 rounded-full border border-gray-100/80">
         <RouterLink 
           to="/category" 
-          class="py-1 border-b-2 transition-colors"
-          :class="isActive('/category') ? 'text-emerald-600 border-emerald-600 font-semibold' : 'text-gray-600 border-transparent hover:text-emerald-600'"
+          class="px-5 py-2.5 rounded-full transition-all duration-300 select-none"
+          :class="isActive('/category') ? 'bg-white text-emerald-700 font-bold shadow-sm ring-1 ring-gray-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50/50'"
         >Kategori</RouterLink>
         <RouterLink 
           to="/stores" 
-          class="py-1 border-b-2 transition-colors"
-          :class="isActive('/stores') ? 'text-emerald-600 border-emerald-600 font-semibold' : 'text-gray-600 border-transparent hover:text-emerald-600'"
+          class="px-5 py-2.5 rounded-full transition-all duration-300 select-none"
+          :class="isActive('/stores') ? 'bg-white text-emerald-700 font-bold shadow-sm ring-1 ring-gray-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50/50'"
         >Toko</RouterLink>
         <RouterLink 
           to="/about" 
-          class="py-1 border-b-2 transition-colors"
-          :class="isActive('/about') ? 'text-emerald-600 border-emerald-600 font-semibold' : 'text-gray-600 border-transparent hover:text-emerald-600'"
+          class="px-5 py-2.5 rounded-full transition-all duration-300 select-none"
+          :class="isActive('/about') ? 'bg-white text-emerald-700 font-bold shadow-sm ring-1 ring-gray-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50/50'"
         >Tentang Kami</RouterLink>
         <RouterLink 
           to="/event" 
-          class="py-1 border-b-2 transition-colors"
-          :class="isActive('/event') ? 'text-emerald-600 border-emerald-600 font-semibold' : 'text-gray-600 border-transparent hover:text-emerald-600'"
+          class="px-5 py-2.5 rounded-full transition-all duration-300 select-none"
+          :class="isActive('/event') ? 'bg-white text-emerald-700 font-bold shadow-sm ring-1 ring-gray-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50/50'"
         >Event</RouterLink>
         <RouterLink 
           to="/help" 
-          class="py-1 border-b-2 transition-colors"
-          :class="isActive('/help') ? 'text-emerald-600 border-emerald-600 font-semibold' : 'text-gray-600 border-transparent hover:text-emerald-600'"
+          class="px-5 py-2.5 rounded-full transition-all duration-300 select-none"
+          :class="isActive('/help') ? 'bg-white text-emerald-700 font-bold shadow-sm ring-1 ring-gray-100' : 'text-gray-500 hover:text-emerald-600 hover:bg-emerald-50/50'"
         >Bantuan</RouterLink>
       </div>
 
       <!-- Desktop Search Bar -->
-      <div class="hidden md:flex flex-1 max-w-xl px-4 relative">
-        <div class="relative w-full">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search class="h-4 w-4 text-gray-400" />
+      <div class="hidden md:flex flex-1 max-w-sm xl:max-w-md ml-auto relative">
+        <div class="relative w-full group">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Search class="h-4 w-4 text-emerald-600/60 group-focus-within:text-emerald-600 transition-colors" />
           </div>
           <input 
             v-model="searchQuery"
@@ -209,7 +212,7 @@ const toggleMobileMenu = () => {
             @focus="searchQuery.trim() ? showDropdown = true : null"
             @blur="handleBlur"
             type="text" 
-            class="block w-full pl-10 pr-10 py-2 border border-gray-200 rounded-lg leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 sm:text-sm transition-colors" 
+            class="block w-full pl-11 pr-10 py-2.5 border border-gray-200/80 rounded-full leading-5 bg-gray-50/50 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 sm:text-sm transition-all duration-300 hover:border-gray-300" 
             :placeholder="searchPlaceholder" 
           />
           <button 
@@ -224,7 +227,7 @@ const toggleMobileMenu = () => {
           <div 
             v-if="showDropdown && hasResults" 
             @mousedown.prevent
-            class="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-50 flex flex-col"
+            class="absolute top-full mt-3 w-full bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl shadow-emerald-900/10 border border-gray-100 overflow-hidden z-50 flex flex-col ring-1 ring-black/5"
           >
               <div v-if="productResults.length">
                   <div class="px-4 pt-3 pb-2 flex items-center gap-2">
@@ -275,19 +278,19 @@ const toggleMobileMenu = () => {
       </div>
 
       <!-- Mobile: Search + Hamburger -->
-      <div class="flex md:hidden items-center gap-2">
+      <div class="flex lg:hidden items-center gap-2.5">
         <button 
           @click="toggleMobileSearch" 
-          class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-          :class="mobileSearchOpen ? 'bg-emerald-50 text-emerald-600' : ''"
+          class="w-10 h-10 flex items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 transition-all active:scale-95"
+          :class="mobileSearchOpen ? 'bg-emerald-100 text-emerald-700 shadow-inner' : 'bg-gray-50 border border-gray-200'"
         >
           <Search v-if="!mobileSearchOpen" class="w-5 h-5" />
           <XIcon v-else class="w-5 h-5" />
         </button>
         <button 
           @click="toggleMobileMenu" 
-          class="w-9 h-9 flex items-center justify-center rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-          :class="mobileMenuOpen ? 'bg-emerald-50 text-emerald-600' : ''"
+          class="w-10 h-10 flex items-center justify-center rounded-full text-gray-700 hover:bg-gray-100 transition-all active:scale-95"
+          :class="mobileMenuOpen ? 'bg-emerald-100 text-emerald-700 shadow-inner' : 'bg-gray-50 border border-gray-200'"
         >
           <XIcon v-if="mobileMenuOpen" class="w-5 h-5" />
           <Menu v-else class="w-5 h-5" />
@@ -295,17 +298,17 @@ const toggleMobileMenu = () => {
       </div>
 
       <!-- Desktop placeholder -->
-      <div class="hidden md:block w-8 shrink-0"></div>
+      <div class="hidden lg:block w-8 shrink-0"></div>
     </div>
 
     <!-- Mobile Search Bar (slide down) -->
     <div 
       v-if="mobileSearchOpen" 
-      class="md:hidden px-4 pb-3 border-t border-gray-50 bg-white"
+      class="lg:hidden px-4 pb-4 pt-1 border-t border-gray-100 bg-white/90 backdrop-blur-lg"
     >
       <div class="relative mt-2">
-        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search class="h-4 w-4 text-gray-400" />
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <Search class="h-4 w-4 text-emerald-600/60" />
         </div>
         <input 
           ref="mobileSearchInput"
@@ -313,7 +316,7 @@ const toggleMobileMenu = () => {
           @keyup.enter="handleSearch"
           @focus="searchQuery.trim() ? showDropdown = true : null"
           type="text" 
-          class="block w-full pl-10 pr-10 py-2.5 border border-gray-200 rounded-xl leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-sm transition-colors" 
+          class="block w-full pl-11 pr-10 py-3 border border-gray-200/80 rounded-full leading-5 bg-white placeholder-gray-400 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/10 text-sm transition-all shadow-sm" 
           :placeholder="searchPlaceholder" 
         />
         <button 
@@ -379,7 +382,7 @@ const toggleMobileMenu = () => {
     <!-- Mobile Menu (slide down) -->
     <div 
       v-if="mobileMenuOpen" 
-      class="md:hidden border-t border-gray-100 bg-white"
+      class="lg:hidden border-t border-gray-100 bg-white/95 backdrop-blur-xl absolute w-full shadow-lg"
     >
       <div class="flex flex-col py-2">
         <RouterLink 
